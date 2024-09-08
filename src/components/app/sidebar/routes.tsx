@@ -27,7 +27,7 @@ export const routes = [
     icon: <NotebookPen className="size-5" />,
   },
   {
-    href: "/admin/reservations",
+    href: "/admin/wallet",
     label: "Balance Económico",
     icon: <Wallet className="size-5" />,
   },
