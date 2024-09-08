@@ -1,22 +1,33 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import z from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { FormInput } from "@/components/form/form-input";
+import useSessionStore from "@/store/useSession";
+
+const scheme = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
+type IForm = z.infer<typeof scheme>;
 
 export default function App() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const form = useForm();
-  const { handleSubmit } = form;
+  const { setToken } = useSessionStore();
 
-  const onSubmit = () => {
-    router.push('admin')
+  const form = useForm<IForm>();
+  const { handleSubmit, control } = form;
+
+  const onSubmit = async () => {
+    router.push("admin");
+    setToken("token")
   };
 
   return (
@@ -28,31 +39,24 @@ export default function App() {
             className="mx-auto grid w-[350px] gap-6"
           >
             <div className="grid gap-2 text-center">
-              <h1 className="text-3xl font-bold">Login</h1>
+              <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
               <p className="text-balance text-muted-foreground">
                 Enter your email below to login to your account
               </p>
             </div>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                />
+                <FormInput control={control} label="Email" name="email" />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/forgot-password"
-                    className="ml-auto inline-block text-sm underline"
-                  >
-                    Forgot your password?
-                  </Link>
+                <div className="">
+                  <FormInput
+                    control={control}
+                    label="Contraseña"
+                    name="password"
+                    type="password"
+                  />
                 </div>
-                <Input id="password" type="password"  />
               </div>
               <Button type="submit" className="w-full">
                 Login

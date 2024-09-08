@@ -1,12 +1,10 @@
+"use client";
 import Link from "next/link";
-import {
-  CircleUser,
-  Menu,
-  Package2,
-} from "lucide-react";
+import { CircleUser, Menu, Package2 } from "lucide-react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,12 +17,23 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Sidebar from "@/components/app/sidebar/sidebar-desktop";
 import SidebarMobile from "@/components/app/sidebar/sidebar-mobile";
 import { ModeToggle } from "@/components/shared/theme-toggel";
+import useSessionStore from "@/store/useSession";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { token } = useSessionStore();
+  const router = useRouter();
+  useEffect(() => {
+    if (!token) {
+      router.replace("/");
+    }
+  }, [router, token]);
+
+  if (!token) return <></>;
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -34,7 +43,7 @@ export default function DashboardLayout({
               <Package2 className="h-6 w-6" />
               <span className="">Agency-Go</span>
             </Link>
-            <ModeToggle/>
+            <ModeToggle />
           </div>
           <Sidebar />
         </div>
@@ -57,7 +66,7 @@ export default function DashboardLayout({
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1"></div>
-        
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
