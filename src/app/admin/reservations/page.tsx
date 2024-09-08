@@ -16,6 +16,7 @@ function Reservations() {
           selected={date}
           onSelect={setDate}
           className="rounded-md border"
+          lang="es-Es"
         />
       </div>
     </section>

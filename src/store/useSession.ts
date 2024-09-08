@@ -1,5 +1,6 @@
-import { create } from 'zustand';
-
+"use client"
+import { create } from "zustand";
+import {  persist } from "zustand/middleware";
 interface User {
   id: string;
   name: string;
@@ -14,12 +15,20 @@ interface SessionState {
   clearSession: () => void;
 }
 
-const useSessionStore = create<SessionState>((set) => ({
-  user: null,
-  token: null,
-  setUser: (user) => set({ user }),
-  setToken: (token) => set({ token }),
-  clearSession: () => set({ user: null, token: null }),
-}));
+const useSessionStore = create<SessionState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      setUser: (user) => set({ user }),
+      setToken: (token) => set({ token }),
+      clearSession: () => set({ user: null, token: null }),
+    }),
+    {
+      name: "session-storage",
+    }
+  )
+);
+
 
 export default useSessionStore;
