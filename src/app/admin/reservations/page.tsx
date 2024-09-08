@@ -1,9 +1,25 @@
-import React from 'react'
+"use client"
+import { Calendar } from "@/components/ui/calendar";
+import React, { useState } from "react";
 
 function Reservations() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <div>Reservations</div>
-  )
+    <section className="">
+      <header>
+        <h1>Reservations</h1>
+      </header>
+
+      <div className="max-w-fit">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          className="rounded-md border"
+        />
+      </div>
+    </section>
+  );
 }
 
-export default Reservations
+export default Reservations;
