@@ -1,33 +1,29 @@
-"use client"
-import { DataTable } from "@/components/table/table-date"
+"use client";
+import { DataTable } from "@/components/table/table-date";
 import { columnsDriver } from "./components/drivers-columns";
-
-
-const data = [
-  { id: 1, name: 'Alice', email: 'alice@example.com', age: 30 },
-  { id: 2, name: 'Bob', email: 'bob@example.com', age: 25 },
-  { id: 3, name: 'Charlie', email: 'charlie@example.com', age: 35 },
-  { id: 4, name: 'Dan', email: 'dan@example.com', age: 30 },
-  { id: 5, name: 'Eve', email: 'eve@<EMAIL>', age: 28 },
-  { id: 6, name: 'Eve', email: 'eve@<EMAIL>', age: 28 },
-  { id: 7, name: 'Eve', email: 'e<EMAIL>', age: 28 },
-
-];
-
+import { useDriver } from "./hooks/useDrivers";
 
 function Drivers() {
+  const { data: driver, isFetching } = useDriver();
+
+  console.log(driver);
+
   return (
     <section>
       <header>
         <h1>Drivers</h1>
       </header>
 
-
       <div>
-      <DataTable columns={columnsDriver} data={data} />
+        <DataTable
+          columns={columnsDriver}
+          data={driver}
+          keySearch={"firstName"}
+          isLoading={isFetching}
+        />
       </div>
     </section>
-  )
+  );
 }
 
-export default Drivers
+export default Drivers;

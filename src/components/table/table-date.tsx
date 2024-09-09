@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "./table-pagination";
 import { DataTableViewOptions } from "./table-view-options";
+import { LoaderIcon } from "lucide-react";
 
 export type Payment = {
   id: string;
@@ -37,10 +38,12 @@ interface Props<T> {
   data: T[];
   loading?: boolean;
   columns: ColumnDef<T>[];
+  keySearch: keyof T;
+  isLoading?: boolean;
 }
 
 export function DataTable<T>(props: Props<T>) {
-  const { data, columns } = props;
+  const { data, columns, keySearch, isLoading } = props;
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -72,10 +75,16 @@ export function DataTable<T>(props: Props<T>) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter ..."
+          value={
+            (table
+              .getColumn(keySearch as string)
+              ?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table
+              .getColumn(keySearch as string)
+              ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -102,7 +111,17 @@ export function DataTable<T>(props: Props<T>) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+               <TableRow>
+               <TableCell
+                 colSpan={columns.length}
+                 className="h-28 text-center "
+               >
+                <LoaderIcon className="animate-spin size-10  mx-auto" />
+                Cargando...
+               </TableCell>
+             </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
