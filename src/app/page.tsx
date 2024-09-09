@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
 import useSessionStore from "@/store/useSession";
+import axios from "axios";
 
 const scheme = z.object({
   email: z.string().email(),
@@ -20,14 +21,23 @@ type IForm = z.infer<typeof scheme>;
 export default function App() {
   const router = useRouter();
 
-  const { setToken } = useSessionStore();
+  const { setToken, setUser } = useSessionStore();
 
   const form = useForm<IForm>();
   const { handleSubmit, control } = form;
 
-  const onSubmit = async () => {
-    router.push("admin");
-    setToken("token")
+  const onSubmit = async (dataForm: IForm) => {
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        dataForm
+      );
+      setToken(data.access_token);
+      setUser(data.user);
+      router.push("admin");
+    } catch (error) {
+      alert("error");
+    }
   };
 
   return (
@@ -60,9 +70,6 @@ export default function App() {
               </div>
               <Button type="submit" className="w-full">
                 Login
-              </Button>
-              <Button variant="outline" className="w-full">
-                Login with Google
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

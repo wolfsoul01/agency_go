@@ -24,7 +24,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { token } = useSessionStore.getState();
+  const { token, user } = useSessionStore.getState();
   const router = useRouter();
 
   useEffect(() => {
@@ -74,7 +74,9 @@ export default function DashboardLayout({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="uppercase">
+                {user?.name}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
