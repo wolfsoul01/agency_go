@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import React, { HTMLInputTypeAttribute, useState } from "react";
-import { Eye, EyeIcon, EyeOff } from "lucide-react";
+import {  EyeIcon, EyeOff } from "lucide-react";
 import { Icon } from "@radix-ui/react-select";
 
 interface FormInputProps<TFieldValues extends FieldValues> {

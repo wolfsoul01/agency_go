@@ -1,5 +1,18 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+"use client";
 import { DataTableColumnHeader } from "@/components/table/table-header";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Eye, MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Driver {
   id: number;
@@ -42,6 +55,44 @@ export const columnsDriver: ColumnDef<Driver>[] = [
     cell: ({ row }) => {
       const { phoneNumber } = row.original;
       return <div className="capitalize">{phoneNumber}</div>;
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => {
+      const router = useRouter();
+      const action = () => {
+        router.push(`drivers/${row.original.id}`);
+      };
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={action}
+              className="flex items-center gap-x-2"
+            >
+              <Eye />
+              Ver detalles
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={action}
+              className="flex items-center gap-x-2"
+            >
+              <Edit />
+              Editar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
     },
   },
 ];
