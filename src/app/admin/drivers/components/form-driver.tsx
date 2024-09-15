@@ -4,7 +4,7 @@ import { FormInput } from "@/components/form/form-input";
 import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Loader2Icon, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import {
@@ -20,14 +20,15 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { FormSelect, SelectItem } from "@/components/form/form-select";
-import ImageUpload from "@/components/shared/ImageUpload";
 import query from "@/lib/axios.config";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   license: z.string().min(10).max(25),
-  age: z.number().min(18).max(90),
+  age: z.string().transform(Number),
   phoneNumber: z.string().optional(),
   type_license: z.string().optional(),
 });
@@ -41,6 +42,8 @@ interface Props {
 function FormDriver(props: Props) {
   const { callback, defaultValue } = props;
 
+  const router = useRouter()
+
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,25 +55,46 @@ function FormDriver(props: Props) {
     },
   });
 
-  console.log(defaultValue?.firstName);
-
   const { handleSubmit, control } = form;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+
   const onSubmit = async (data: IForm) => {
     try {
       setIsLoading(true);
+      console.log(data);
       try {
-        await query.post("/driver", {
-            ...data,
-          });
-      } catch (error) {
-        alert("Error");
+        defaultValue
+          ? await query.patch(`/driver/${defaultValue.id}`, {
+              ...data,
+            })
+          : await query.post("/driver", {
+              ...data,
+            });
+      } catch (error: any) {
+        toast.error(error.message);
       }
-     
+
       callback && callback();
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error.message);
     } finally {
+      toast.success(
+        defaultValue
+          ? "Driver update  successfully"
+          : "Driver added successfully"
+      );
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleted = async (id: number) => {
+    setIsDeleted(true);
+    try {
+      await query.delete(`/driver/${id}`).finally(() => setIsDeleted(false));
+      router.back();
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -90,14 +114,36 @@ function FormDriver(props: Props) {
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-3 "
+          className="grid grid-cols-1  gap-x-5 gap-y-3 "
         >
           <Card className="w-full max-w-7xl mx-auto">
             <CardHeader>
-              <CardTitle>Formulario de Conductor</CardTitle>
-              <CardDescription>
-                Por favor, ingrese los detalles del conductor.
-              </CardDescription>
+              <div className="flex justify-between   ">
+                <div>
+                  <CardTitle>Formulario de Conductor</CardTitle>
+                  <CardDescription>
+                    Por favor, ingrese los detalles del conductor.
+                  </CardDescription>
+                </div>
+
+                {defaultValue && (
+                  <Button
+                    variant={"destructive"}
+                    className="flex items-center gap-x-2"
+                    onClick={() => handleDeleted(defaultValue?.id as number)}
+                    type="button"
+                    disabled={isDeleted}
+                  >
+                    {" "}
+                    {isDeleted ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <Trash />
+                    )}{" "}
+                    Borrar
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -162,18 +208,14 @@ function FormDriver(props: Props) {
             </CardContent>
           </Card>
 
-          <div>
-            <ImageUpload />
-          </div>
-
           <footer className="col-span-full mt-3">
             <Button
               type="submit"
               className="w-full font-semibold flex gap-x-2"
-              disabled={isLoading}
+              disabled={isLoading || isDeleted}
             >
               {isLoading && <Loader2 className="animate-spin" />}
-              Agregar
+              {defaultValue ? "Editar" : "Agregar"}
             </Button>
           </footer>
         </form>

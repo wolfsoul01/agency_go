@@ -1,21 +1,31 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import FormDriver from "../components/form-driver";
 import { useDriverDetails } from "../hooks/useDriverDetails";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 function DriverDetails() {
   const { id } = useParams();
-
-  const { data, isSuccess } = useDriverDetails(+id);
+  const router = useRouter();
+  const { data } = useDriverDetails(+id);
 
   return (
     <section>
-      <header>
-        <h2>Detalles</h2>
+      <header className="flex items-center gap-x-3 mb-3">
+        <Button
+          onClick={() => router.back()}
+          className="flex items-center gap-x-2"
+          size={"sm"}
+          variant={"outline"}
+        >
+          {" "}
+          <ArrowLeft /> Volver
+        </Button>
       </header>
 
-      <div>{isSuccess && <FormDriver defaultValue={data} />}</div>
+      <div>{data && <FormDriver defaultValue={data} />}</div>
     </section>
   );
 }

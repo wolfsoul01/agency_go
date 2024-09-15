@@ -10,7 +10,7 @@ export const useDriverDetails = (id: number) => {
   const query = useQuery({
     queryKey: [`driver-${id}`],
     queryFn: () => fetchDriver(id),
-    initialData: [],
+    initialData: null,
   });
 
   return {

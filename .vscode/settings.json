@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "App",
-        "Reservations"
+        "Reservations",
+        "Driver"
     ]
 }

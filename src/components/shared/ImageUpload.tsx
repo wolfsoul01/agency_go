@@ -2,7 +2,6 @@
 import { useDropzone } from "react-dropzone";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 
 interface ImageUploadProps {}
@@ -34,7 +33,7 @@ export default function ImageUpload({}: ImageUploadProps) {
     <div className="flex flex-col space-y-4">
       <div
         {...getRootProps()}
-        className="rounded-full bg-[url()]"
+        className="rounded-full"
       >
         <input {...getInputProps()} />
       </div>
