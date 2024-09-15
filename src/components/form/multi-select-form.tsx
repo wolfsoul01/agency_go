@@ -36,9 +36,11 @@ export function FormMultiSelect<TFieldValues extends FieldValues>(
   const [open, setOpen] = React.useState(false);
 
   const searchItem = (value: string) => {
-    return items.map((item) => {
-      if (value === item.value) return item.label;
-    });
+    return items
+      .map((item) => {
+        if (value === item.value) return item.label;
+      })
+      .filter((item) => item);
   };
 
   return (
@@ -53,14 +55,14 @@ export function FormMultiSelect<TFieldValues extends FieldValues>(
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-[200px] flex flex-wrap justify-between"
+                className="w-[200px] justify-between"
               >
-                {field.value.length < 0
+                {field.value.length === 0 
                   ? "Seleccione..."
                   : field.value.length > 2
                   ? `${field.value.length} seleccionados`
                   : field.value.map(searchItem).join(", ")}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <ChevronsUpDown className=" h-4 w-4 shrink-0 opacity-50 " />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
@@ -74,7 +76,6 @@ export function FormMultiSelect<TFieldValues extends FieldValues>(
                         const checked = !!field.value.find(
                           (select: string) => select === item.value
                         );
-
                         return (
                           <CommandItem
                             key={item.value}
