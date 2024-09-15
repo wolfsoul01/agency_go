@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 
 export type SelectItem = {
-  name: string;
+  value: string;
   label: string;
 };
 
@@ -53,7 +53,7 @@ export function FormSelect<TFieldValues extends FieldValues>({
                 <SelectGroup>
                   {selectItem.map((item) => {
                     return (
-                      <SelectItem key={item.name} value={item.name}>{item.label}</SelectItem>
+                      <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
                     );
                   })}
                 </SelectGroup>

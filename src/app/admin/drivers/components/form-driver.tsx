@@ -102,27 +102,27 @@ function FormDriver(props: Props) {
 
   const dataSelect: SelectItem[] = [
     {
-      name: "A",
+      value: "A",
       label: "A (Motocicletas y ciclomotores)",
     },
     {
-      name: "B",
+      value: "B",
       label: "B (Automóviles, camionetas y vehículos ligeros)",
     },
     {
-      name: "C",
+      value: "C",
       label: "C (Camiones de más de 3.5 toneladas)",
     },
     {
-      name: "C1",
+      value: "C1",
       label: "C1 (Camiones ligeros de hasta 3.5 toneladas)",
     },
     {
-      name: "D",
+      value: "D",
       label: "D (Autobuses y vehículos de transporte público)",
     },
     {
-      name: "D1",
+      value: "D1",
       label: "D1 (Microbuses de transporte de pasajeros)",
     },
   ];
