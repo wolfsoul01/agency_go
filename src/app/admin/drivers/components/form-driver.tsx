@@ -23,6 +23,7 @@ import { FormSelect, SelectItem } from "@/components/form/form-select";
 import query from "@/lib/axios.config";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
 
 const formSchema = z.object({
   firstName: z.string(),
@@ -30,7 +31,7 @@ const formSchema = z.object({
   license: z.string().min(10).max(25),
   age: z.string().transform(Number),
   phoneNumber: z.string().optional(),
-  type_license: z.string().optional(),
+  typeLicense: z.enum(["A", "B", "C1", "D1", "D"]),
 });
 type IForm = z.infer<typeof formSchema>;
 
@@ -42,7 +43,7 @@ interface Props {
 function FormDriver(props: Props) {
   const { callback, defaultValue } = props;
 
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -52,6 +53,7 @@ function FormDriver(props: Props) {
       license: defaultValue?.license,
       age: defaultValue?.age,
       phoneNumber: defaultValue?.phoneNumber,
+      typeLicense: defaultValue?.typeLicense,
     },
   });
 
@@ -101,22 +103,60 @@ function FormDriver(props: Props) {
   const dataSelect: SelectItem[] = [
     {
       name: "A",
-      label: "A",
+      label: "A (Motocicletas y ciclomotores)",
     },
     {
       name: "B",
-      label: "B",
+      label: "B (Automóviles, camionetas y vehículos ligeros)",
+    },
+    {
+      name: "C",
+      label: "C (Camiones de más de 3.5 toneladas)",
+    },
+    {
+      name: "C1",
+      label: "C1 (Camiones ligeros de hasta 3.5 toneladas)",
+    },
+    {
+      name: "D",
+      label: "D (Autobuses y vehículos de transporte público)",
+    },
+    {
+      name: "D1",
+      label: "D1 (Microbuses de transporte de pasajeros)",
     },
   ];
-
   return (
     <div>
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-1  gap-x-5 gap-y-3 "
+          className="grid grid-cols-1 md:grid-cols-4  gap-x-5 gap-y-3 "
         >
-          <Card className="w-full max-w-7xl mx-auto">
+          <Card>
+            <CardContent className=" flex flex-col justify-between h-full  p-10">
+              <ProfilePhotoUpload />
+
+              {defaultValue && (
+                <Button
+                  variant={"destructive"}
+                  className="flex items-center gap-x-2 mt-auto"
+                  onClick={() => handleDeleted(defaultValue?.id as number)}
+                  type="button"
+                  disabled={isDeleted}
+                >
+                  {" "}
+                  {isDeleted ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    <Trash />
+                  )}{" "}
+                  Borrar
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="w-full max-w-7xl mx-auto col-span-3">
             <CardHeader>
               <div className="flex justify-between   ">
                 <div>
@@ -125,24 +165,6 @@ function FormDriver(props: Props) {
                     Por favor, ingrese los detalles del conductor.
                   </CardDescription>
                 </div>
-
-                {defaultValue && (
-                  <Button
-                    variant={"destructive"}
-                    className="flex items-center gap-x-2"
-                    onClick={() => handleDeleted(defaultValue?.id as number)}
-                    type="button"
-                    disabled={isDeleted}
-                  >
-                    {" "}
-                    {isDeleted ? (
-                      <Loader2Icon className="animate-spin" />
-                    ) : (
-                      <Trash />
-                    )}{" "}
-                    Borrar
-                  </Button>
-                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -190,7 +212,7 @@ function FormDriver(props: Props) {
                   <div className="space-y-2">
                     <FormSelect
                       control={control}
-                      name="type_license"
+                      name="typeLicense"
                       label="Tipo de licencia"
                       selectItem={dataSelect}
                     />

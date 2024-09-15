@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, MoreHorizontal } from "lucide-react";
+import { Edit , MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Driver {
@@ -80,14 +80,7 @@ export const columnsDriver: ColumnDef<Driver>[] = [
               onClick={action}
               className="flex items-center gap-x-2"
             >
-              <Eye />
-              Ver detalles
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={action}
-              className="flex items-center gap-x-2"
-            >
-              <Edit />
+              <Edit strokeWidth={1.2} className="size-5" />
               Editar
             </DropdownMenuItem>
           </DropdownMenuContent>

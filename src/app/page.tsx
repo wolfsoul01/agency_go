@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,9 @@ import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
 import useSessionStore from "@/store/useSession";
 import axios from "axios";
+import { toast } from "sonner";
+import { useState } from "react";
+import { Loader2Icon } from "lucide-react";
 
 const scheme = z.object({
   email: z.string().email(),
@@ -23,10 +27,13 @@ export default function App() {
 
   const { setToken, setUser } = useSessionStore();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const form = useForm<IForm>();
   const { handleSubmit, control } = form;
 
   const onSubmit = async (dataForm: IForm) => {
+    setIsLoading(true);
     try {
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -35,8 +42,10 @@ export default function App() {
       setToken(data.access_token);
       setUser(data.user);
       router.push("admin");
-    } catch (error) {
-      alert("error");
+    } catch (error: any) {
+      toast.error(error.message, {
+        description: "",
+      });
     }
   };
 
@@ -68,7 +77,12 @@ export default function App() {
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full flex gap-x-2 items-center"
+                disabled={isLoading}
+              >
+                {isLoading && <Loader2Icon className="animate-spin" />}
                 Login
               </Button>
             </div>

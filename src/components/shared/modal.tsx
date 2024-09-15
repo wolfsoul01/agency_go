@@ -15,7 +15,7 @@ interface Props {
   title?: React.ReactNode;
   children?: React.ReactNode;
   description?: React.ReactNode;
-  size?: "sm" | "md" | "xl" | "2xl" | "3xl";
+  size?: "sm" | "md" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 }
 
 const modalVariants = cva("", 
@@ -27,6 +27,8 @@ const modalVariants = cva("",
       xl: "max-w-xl", // Grande
       "2xl": "max-w-2xl", // Extra Grande
       "3xl": "max-w-3xl", // Super Grande
+      "4xl": "max-w-4xl", 
+      "5xl": "max-w-5xl", 
     },
   },
   defaultVariants: {

@@ -7,6 +7,7 @@ import { PlusCircle } from "lucide-react";
 import Modal from "@/components/shared/modal";
 import FormDriver from "./components/form-driver";
 import { useState } from "react";
+import { Label } from "@/components/ui/label";
 
 function Drivers() {
   const { data: driver, isFetching, refetch } = useDriver();
@@ -21,12 +22,13 @@ function Drivers() {
   return (
     <section>
       <header className="flex items-center justify-between px-4">
-        <h1>Drivers</h1>
+        <Label className="text-2xl">Drivers</Label>
 
         <div>
           <Button
             className="flex gap-x-2 items-center"
             onClick={() => setShowModal(true)}
+            variant={"outline"}
           >
             <PlusCircle /> Agregar
           </Button>
@@ -41,7 +43,7 @@ function Drivers() {
           isLoading={isFetching}
         />
       </div>
-      <Modal size="3xl" close={() => setShowModal(false)} open={showModal}>
+      <Modal size="5xl" close={() => setShowModal(false)} open={showModal}>
         <FormDriver callback={callback} />
       </Modal>
     </section>
