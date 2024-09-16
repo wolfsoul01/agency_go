@@ -1,5 +1,5 @@
 "use client";
-import Component from "./components/travel-grid";
+import Component from "./components/accomodation-container";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { FormMultiSelect } from "@/components/form/multi-select-form";
