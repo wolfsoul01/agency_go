@@ -4,24 +4,31 @@ import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PhoneOutgoing, X } from "lucide-react";
-import defaultImage from "@/assets/user-default.jpg";
-import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import Img from "@/assets/user-default.jpg";
 
-export default function ProfilePhotoUpload() {
+interface Props {
+  onUpload?: (data: File) => Promise<void>;
+  defaultImage?: string;
+}
+
+export default function ProfilePhotoUpload({ onUpload ,defaultImage}: Props) {
   const [photo, setPhoto] = useState<string | null>();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       const reader = new FileReader();
+
       reader.onloadend = () => {
         setPhoto(reader.result as string);
       };
       reader.readAsDataURL(file);
-    }
 
-    
+      console.log(file);
+
+      onUpload && onUpload(file);
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -36,6 +43,9 @@ export default function ProfilePhotoUpload() {
 
   return (
     <div className="flex flex-col items-center space-y-4 w-full max-w-md">
+      <header>
+        <h3 className="font-medium text-2xl">Perfil</h3>
+      </header>
       <div
         {...getRootProps()}
         className={`group-hover relative border-2 border-dashed rounded-full  text-center cursor-pointer transition-colors duration-200 ease-in-out ${
@@ -47,24 +57,22 @@ export default function ProfilePhotoUpload() {
         <div className="">
           <input {...getInputProps()} />
           <Avatar className="w-32 h-32 mx-auto">
-            <AvatarImage src={photo ?? defaultImage.src} alt="Profile photo" />
+            <AvatarImage src={photo ??  defaultImage ?? Img.src} alt="Profile photo" />
             <AvatarFallback>Preview</AvatarFallback>
           </Avatar>
-
-          <aside
-          >
-            {/* <PhoneOutgoing  className={cn(
-              " absolute transition-all duration-150 ease-in-out group-hover:scale-125",
-              isDragActive && "opacity-100 scale-125  "
-            )}/> */}
-          </aside>
         </div>
       </div>
+
+      <aside>
+        <p className="text-gray-500 opacity-80 text-sm font-normal">
+          Permitido *.jpeg, *.jpg, *.png, *.gif max 3 Mb
+        </p>
+      </aside>
       {photo && (
         <div className="flex justify-center space-x-2">
           <Button variant="destructive" size="sm" onClick={handleRemovePhoto}>
             <X className="w-4 h-4 mr-2" />
-            Remove
+            Remover imagen
           </Button>
         </div>
       )}

@@ -1,3 +1,4 @@
+
 export interface Driver {
   id: number;
   firstName: string;
@@ -7,4 +8,10 @@ export interface Driver {
   phoneNumber: string;
   userId: number;
   typeLicense: "A" | "B" | "C1" | "D1" | "D";
+  image:Image
+}
+export interface Image {
+  id: number;
+  url: string;
+  description: string;
 }

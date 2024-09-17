@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Driver } from "@/interfaces/server-interface";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
@@ -63,6 +64,7 @@ function FormDriver(props: Props) {
   const onSubmit = async (data: IForm) => {
     try {
       setIsLoading(true);
+      console.log(data);
       try {
         defaultValue
           ? await query.patch(`/driver/${defaultValue.id}`, {
@@ -71,19 +73,19 @@ function FormDriver(props: Props) {
           : await query.post("/driver", {
               ...data,
             });
-
-        toast.success(
-          defaultValue
-            ? "Driver update  successfully"
-            : "Driver added successfully"
-        );
-        callback && callback();
       } catch (error: any) {
         toast.error(error.message);
       }
+
+      callback && callback();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
+      toast.success(
+        defaultValue
+          ? "Driver update  successfully"
+          : "Driver added successfully"
+      );
       setIsLoading(false);
     }
   };
@@ -124,14 +126,6 @@ function FormDriver(props: Props) {
       label: "D1 (Microbuses de transporte de pasajeros)",
     },
   ];
-
-  const handleUpload = async (data: File) => {
-    const formData = new FormData();
-    formData.append("file", data);
-    formData.append("driverId", defaultValue?.id.toString() ?? "");
-
-    query.post("/driver/upload", formData);
-  };
   return (
     <div>
       <Form {...form}>
@@ -139,34 +133,29 @@ function FormDriver(props: Props) {
           onSubmit={handleSubmit(onSubmit)}
           className="grid grid-cols-1 md:grid-cols-4  gap-x-5 gap-y-3 "
         >
-          {defaultValue && (
-            <Card>
-              <CardContent className=" flex flex-col justify-between h-full  p-10">
-                <ProfilePhotoUpload
-                  onUpload={handleUpload}
-                  defaultImage={defaultValue.image.url}
-                />
+          <Card>
+            <CardContent className=" flex flex-col justify-between h-full  p-10">
+              <ProfilePhotoUpload />
 
-                {defaultValue && (
-                  <Button
-                    variant={"destructive"}
-                    className="flex items-center gap-x-2 mt-auto"
-                    onClick={() => handleDeleted(defaultValue?.id as number)}
-                    type="button"
-                    disabled={isDeleted}
-                  >
-                    {" "}
-                    {isDeleted ? (
-                      <Loader2Icon className="animate-spin" />
-                    ) : (
-                      <Trash />
-                    )}{" "}
-                    Borrar
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+              {defaultValue && (
+                <Button
+                  variant={"destructive"}
+                  className="flex items-center gap-x-2 mt-auto"
+                  onClick={() => handleDeleted(defaultValue?.id as number)}
+                  type="button"
+                  disabled={isDeleted}
+                >
+                  {" "}
+                  {isDeleted ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    <Trash />
+                  )}{" "}
+                  Borrar
+                </Button>
+              )}
+            </CardContent>
+          </Card>
           <Card className="w-full max-w-7xl mx-auto col-span-3">
             <CardHeader>
               <div className="flex justify-between   ">
@@ -231,6 +220,10 @@ function FormDriver(props: Props) {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="activo" />
                     <Label>Conductor Activo</Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Foto del Conductor</Label>
+                    <Input id="foto" type="file" accept="image/*" />
                   </div>
                 </div>
               </div>

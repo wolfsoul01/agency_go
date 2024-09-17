@@ -1,6 +1,8 @@
 
 import placeholder from "@/assets/placeholder.png";
 import AccommodationItem from "./accomodation-item";
+
+
 export default function Component() {
   const adventures = [
     {

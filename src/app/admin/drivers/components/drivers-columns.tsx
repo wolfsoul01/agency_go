@@ -11,25 +11,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit , MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
+import defaultImage from "@/assets/user-default.jpg";
+import { Driver } from "@/interfaces/server-interface";
 
-interface Driver {
-  id: number;
-  firstName: string;
-  lastName: string;
-  license: string;
-  age: number;
-  phoneNumber: string;
-}
+
 export const columnsDriver: ColumnDef<Driver>[] = [
   {
     header: "Nombre",
     accessorKey: "firstName",
     cell: ({ row }) => {
-      const { firstName, lastName } = row.original;
+      const { firstName, lastName, image } = row.original;
       return (
-        <div className="capitalize">
+        <div className="capitalize flex items-center gap-x-3">
+          <img
+            src={image?.url ?? defaultImage.src}
+            alt="User"
+            className="size-10 rounded-full"
+          />{" "}
           {firstName} {lastName}
         </div>
       );

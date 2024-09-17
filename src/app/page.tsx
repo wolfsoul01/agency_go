@@ -46,6 +46,8 @@ export default function App() {
       toast.error(error.message, {
         description: "",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -1,4 +1,12 @@
-import { CarTaxiFront, Home, Hotel, MapPin, NotebookPen, User, Wallet } from "lucide-react";
+import {
+  CarTaxiFront,
+  Home,
+  Hotel,
+  MapPin,
+  NotebookPen,
+  User,
+} from "lucide-react";
+
 
 export const routes = [
   {
@@ -30,10 +38,5 @@ export const routes = [
     href: "/admin/reservations",
     label: "Reservaciones",
     icon: <NotebookPen className="size-5" />,
-  },
-  {
-    href: "/admin/wallet",
-    label: "Balance Económico",
-    icon: <Wallet className="size-5" />,
   },
 ];
