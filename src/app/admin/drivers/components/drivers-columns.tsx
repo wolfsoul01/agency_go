@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import defaultImage from "@/assets/user-default.jpg";
 import { Driver } from "@/interfaces/server-interface";
 
-
 export const columnsDriver: ColumnDef<Driver>[] = [
   {
     header: "Nombre",
@@ -55,6 +54,14 @@ export const columnsDriver: ColumnDef<Driver>[] = [
     cell: ({ row }) => {
       const { phoneNumber } = row.original;
       return <div className="capitalize">{phoneNumber}</div>;
+    },
+  },
+  {
+    header: "Licencias",
+    accessorKey: "licenses",
+    cell: ({ row }) => {
+      const { typeLicense } = row.original;
+      return <div className="capitalize">{typeLicense}</div>;
     },
   },
   {

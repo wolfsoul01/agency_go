@@ -9,7 +9,7 @@ import { ArrowLeft } from "lucide-react";
 function DriverDetails() {
   const { id } = useParams();
   const router = useRouter();
-  const { data } = useDriverDetails(+id);
+  const { data, isFetching } = useDriverDetails(+id);
 
   return (
     <section>
@@ -25,7 +25,7 @@ function DriverDetails() {
         </Button>
       </header>
 
-      <div>{data && <FormDriver defaultValue={data} />}</div>
+      <div>{data && !isFetching && <FormDriver defaultValue={data} />}</div>
     </section>
   );
 }

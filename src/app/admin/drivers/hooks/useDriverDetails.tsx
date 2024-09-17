@@ -11,6 +11,7 @@ export const useDriverDetails = (id: number) => {
     queryKey: [`driver-${id}`],
     queryFn: () => fetchDriver(id),
     initialData: null,
+    staleTime: 0,
   });
 
   return {

@@ -28,7 +28,7 @@ const formSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   license: z.string().min(10).max(25),
-  age: z.string().transform(Number),
+  age: z.any().transform(Number),
   phoneNumber: z.string().optional(),
   typeLicense: z.enum(["A", "B", "C1", "D1", "D"]),
 });
@@ -132,6 +132,7 @@ function FormDriver(props: Props) {
 
     query.post("/driver/upload", formData);
   };
+
   return (
     <div>
       <Form {...form}>
@@ -144,7 +145,7 @@ function FormDriver(props: Props) {
               <CardContent className=" flex flex-col justify-between h-full  p-10">
                 <ProfilePhotoUpload
                   onUpload={handleUpload}
-                  defaultImage={defaultValue.image.url}
+                  defaultImage={defaultValue?.image?.url}
                 />
 
                 {defaultValue && (
