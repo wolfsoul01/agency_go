@@ -39,7 +39,7 @@ export default function AccommodationItem(props: Props) {
           </div>
           <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full px-2 py-1 text-sm font-semibold flex items-center">
             <StarIcon className="w-4 h-4 text-yellow-400 mr-1" />
-            {0}
+            <span className="text-black">{0}</span>
           </div>
         </div>
       </CardHeader>

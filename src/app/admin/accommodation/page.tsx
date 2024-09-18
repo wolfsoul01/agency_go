@@ -15,6 +15,8 @@ function Accommodation() {
     setShowModal(false);
     refetch();
   };
+
+  
   return (
     <section>
       <header className="flex items-center justify-between">

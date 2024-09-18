@@ -55,3 +55,22 @@ export interface Room {
   updatedAt: Date;
   Image: Image;
 }
+
+
+export interface Municipalities {
+  id:         number;
+  name:       string;
+  code:       string;
+  provinceId: number;
+  createdAt:  null;
+  updatedAt:  null;
+}
+
+export interface Provinces {
+  id:        number;
+  name:      string;
+  code:      string;
+  countryId: null;
+  createdAt: null;
+  updatedAt: null;
+}

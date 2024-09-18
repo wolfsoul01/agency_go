@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { FormInput } from "@/components/form/form-input";
-import React, { useState } from "react";
-import { z } from "zod";
+import React, { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Loader2Icon, Trash } from "lucide-react";
+import {  Loader2, Loader2Icon, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Room } from "@/interfaces/server-interface";
+import { Provinces, Room } from "@/interfaces/server-interface";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { FormSelect, SelectItem } from "@/components/form/form-select";
@@ -21,28 +20,11 @@ import query from "@/lib/axios.config";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import RoomImageUpload from "../room-image-upload";
+import { FormAsyncSelect } from "@/components/form/form-async-select";
+import { FormTextArea } from "@/components/form/form-text-area";
+import { manageError } from "@/lib/manege-error";
+import { formSchemaRoom, IFormRoom } from "./form-shcema";
 
-const formSchema = z.object({
-  name: z.string().nonempty("El nombre es obligatorio"),
-  description: z.string().optional(),
-  totalPersons: z.preprocess(
-    Number,
-    z.number().min(1, "Debe haber al menos 1 persona")
-  ),
-  pricePerNight: z.preprocess(
-    Number,
-    z.number().min(0, "El precio debe ser positivo")
-  ),
-  status: z.enum([
-    "AVAILABLE",
-    "OCCUPIED",
-    "MAINTENANCE",
-    "RESERVED",
-    "OUT_OF_SERVICE",
-  ]),
-});
-
-type IForm = z.infer<typeof formSchema>;
 
 interface Props {
   callback?: () => void;
@@ -54,8 +36,8 @@ function FormRoom(props: Props) {
 
   const router = useRouter();
 
-  const form = useForm<IForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<IFormRoom>({
+    resolver: zodResolver(formSchemaRoom),
     defaultValues: {
       name: defaultValue?.name || "",
       description: defaultValue?.description || "",
@@ -65,11 +47,16 @@ function FormRoom(props: Props) {
     },
   });
 
-  const { handleSubmit, control } = form;
+  //States 
+  const { handleSubmit, control, watch } = form;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
 
-  const onSubmit = async (data: IForm) => {
+  //Form state
+  const provinceId = watch("provinceId");
+
+  //Form submit
+  const onSubmit = async (data: IFormRoom) => {
     try {
       setIsLoading(true);
       try {
@@ -109,6 +96,38 @@ function FormRoom(props: Props) {
     { value: "OUT_OF_SERVICE", label: "Fuera de Servicio" },
   ];
 
+  const onFetch = async () => {
+    try {
+      const response = await query.get<Provinces[]>("/address/provinces");
+      const provinces: SelectItem[] = response.data.map((item) => {
+        return { value: item.id.toString(), label: item.name };
+      });
+
+      return provinces;
+    } catch (error) {
+      manageError(error);
+    }
+  };
+
+  const on = useCallback(
+    async (id: string | undefined) => {
+      try {
+        if (!id) return;
+        const response = await query.get<Provinces[]>(
+          `/address/municipalities/${id}`
+        );
+        const provinces: SelectItem[] = response.data.map((item) => {
+          return { value: item.id.toString(), label: item.name };
+        });
+
+        return provinces;
+      } catch (error) {
+        manageError(error);
+      }
+    },
+    [provinceId]
+  );
+
   return (
     <div>
       <Form {...form}>
@@ -117,7 +136,7 @@ function FormRoom(props: Props) {
           className="grid grid-cols-1 gap-x-5 gap-y-3 max-w-7xl"
         >
           <Card className="w-full  mx-auto  ">
-            <CardHeader >
+            <CardHeader>
               <div className="flex ice justify-between">
                 <div>
                   <CardTitle>Formulario de Habitación</CardTitle>
@@ -150,11 +169,7 @@ function FormRoom(props: Props) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <FormInput control={control} name="name" label="Nombre" />
-                  <FormInput
-                    control={control}
-                    name="description"
-                    label="Descripción"
-                  />
+
                   <FormInput
                     control={control}
                     name="totalPersons"
@@ -166,7 +181,7 @@ function FormRoom(props: Props) {
                   <FormInput
                     control={control}
                     name="pricePerNight"
-                    label="Precio por Noche"
+                    label="Precio por Noche $"
                     type="number"
                   />
                   <FormSelect
@@ -174,6 +189,30 @@ function FormRoom(props: Props) {
                     name="status"
                     label="Estado"
                     selectItem={statusOptions}
+                  />
+                </div>
+                <div className="space-y-4">
+                  <FormAsyncSelect
+                    control={control}
+                    name="provinceId"
+                    label="Municipio"
+                    onFetch={onFetch}
+                  />
+                </div>
+                <div>
+                  <FormAsyncSelect
+                    control={control}
+                    name="municipalityId"
+                    label="Provincia"
+                    onFetch={() => on(provinceId)}
+                  />
+                </div>
+
+                <div className="col-span-full">
+                  <FormTextArea
+                    control={control}
+                    name="description"
+                    label="Descripción"
                   />
                 </div>
               </div>
