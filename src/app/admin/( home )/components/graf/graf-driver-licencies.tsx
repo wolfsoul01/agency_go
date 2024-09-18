@@ -21,8 +21,6 @@ import {
 import { formatDate } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import query from "@/lib/axios.config";
-import FormVehicleSkeleton from "../../vehicle/components/form-vehicle-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export const description = "Resumen de licencias";
 
@@ -68,8 +66,6 @@ export function GrafDriverLicencies() {
     initialData: null,
   });
 
-  console.log(data);
-
   const chartData = [
     { licencie: "A", count: data?.A, fill: "var(--color-chrome)" },
     { licencie: "B", count: data?.B, fill: "var(--color-safari)" },
@@ -79,8 +75,11 @@ export function GrafDriverLicencies() {
     { licencie: "D1", count: data?.D1, fill: "var(--color-other)" },
   ];
   const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + (curr?.count ?? 0), 0);
-  }, []);
+    return (
+      chartData && chartData.reduce((acc, curr) => acc + (curr?.count ?? 0), 0)
+    );
+  }, [chartData]);
+
 
   if (!data || isFetching) return <div></div>;
 

@@ -5,8 +5,7 @@ import { CalendarDays, Car, Home, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import query from "@/lib/axios.config";
-import { GrafDriverLicencies } from "./components/graf-driver-licencies";
-import FormVehicleSkeleton from "../vehicle/components/form-vehicle-skeleton";
+import { GrafDriverLicencies } from "./components/graf/graf-driver-licencies";
 import TopCars from "./components/top-cars";
 
 export interface AnalyticsData {

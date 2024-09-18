@@ -1,48 +1,41 @@
 "use client";
-import Component from "./components/accomodation-container";
-import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
-import { FormMultiSelect } from "@/components/form/multi-select-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-const formSchema = z.object({
-  typeLicencies: z.array(z.string()),
-});
-
-type IForm = z.infer<typeof formSchema>;
+import RoomView from "./components/accomodation-container";
+import { useState } from "react";
+import { PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/shared/modal";
+import FormRoom from "./components/form/form-room";
+import { useRooms } from "./hooks/useRooms";
 
 function Accommodation() {
-  const frameworks = [
-    { value: "next.js", label: "Next.js" },
-    { value: "sveltekit", label: "SvelteKit" },
-    { value: "nuxt.js", label: "Nuxt.js" },
-    { value: "remix", label: "Remix" },
-    { value: "astro", label: "Astro" },
-  ];
-  const form = useForm<IForm>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      typeLicencies: ["astro"],
-    },
-  });
+  const [showModal, setShowModal] = useState(false);
 
-  const { control, watch } = form;
-  console.log(watch());
+  const { data, refetch } = useRooms();
+  const callback = () => {
+    setShowModal(false);
+    refetch();
+  };
   return (
     <section>
-      <header>Accommodation</header>
-      <Form {...form}>
-        <form>
-          <FormMultiSelect
-            items={frameworks}
-            name="typeLicencies"
-            control={control}
-          />
-        </form>
-      </Form>
+      <header className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Habitaciones</h2>
 
-      <Component />
+        <aside>
+          <Button
+            className="flex gap-x-2 items-center"
+            onClick={() => setShowModal(true)}
+            variant={"outline"}
+          >
+            <PlusCircle /> Agregar
+          </Button>
+        </aside>
+      </header>
+
+      <RoomView rooms={data} />
+
+      <Modal size="4xl" open={showModal} close={() => setShowModal(false)}>
+        <FormRoom callback={callback} />
+      </Modal>
     </section>
   );
 }

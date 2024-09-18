@@ -41,3 +41,17 @@ export interface User {
   isSuperAdmin: boolean;
   imageId: null;
 }
+
+export interface Room {
+  id: number;
+  name: string;
+  description: string;
+  totalPersons: number;
+  status: "AVAILABLE" | "OCCUPIED" | "MAINTENANCE" | "OUT_OF_SERVICE";
+  pricePerNight: number;
+  available: boolean;
+  imageId: null;
+  createdAt: Date;
+  updatedAt: Date;
+  Image: Image;
+}
