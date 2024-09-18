@@ -14,6 +14,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Loader2Icon } from "lucide-react";
+import { Login } from "@/interfaces/server-interface";
 
 const scheme = z.object({
   email: z.string().email(),
@@ -35,13 +36,18 @@ export default function App() {
   const onSubmit = async (dataForm: IForm) => {
     setIsLoading(true);
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.post<Login>(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         dataForm
       );
       setToken(data.access_token);
       setUser(data.user);
-      router.push("admin");
+
+      if (data.user.role === "USER") {
+        return router.push("client");
+      } else {
+        router.push("admin");
+      }
     } catch (error: any) {
       toast.error(error.message, {
         description: "",

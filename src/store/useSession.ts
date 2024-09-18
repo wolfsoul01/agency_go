@@ -1,11 +1,8 @@
 "use client"
+import { User } from "@/interfaces/server-interface";
 import { create } from "zustand";
 import {  persist } from "zustand/middleware";
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+
 
 interface SessionState {
   user: User | null;

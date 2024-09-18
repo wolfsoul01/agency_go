@@ -6,13 +6,15 @@ import { ArrowLeft } from "lucide-react";
 import FormVeihcle from "../components/form-vehicle";
 import { useDetailVehicle } from "../hooks/useDetailsVehicle";
 import FormVehicleSkeleton from "../components/form-vehicle-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function CardDetails() {
   const { id } = useParams();
   const router = useRouter();
   const { data, isFetching } = useDetailVehicle(+id);
 
-  if (isFetching || !data) return <FormVehicleSkeleton />;
+  if (isFetching || !data) return   <FormVehicleSkeleton />;
+  // <FormVehicleSkeleton />;
 
   return (
     <section>

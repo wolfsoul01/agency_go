@@ -1,39 +1,23 @@
 "use client"
-import React from "react";
-import { Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FormVehicleSkeleton() {
   return (
     <div>
-      <form className="grid grid-cols-1 gap-x-5 gap-y-3">
+      <div className="grid grid-cols-1 gap-x-5 gap-y-3">
         <Card className="w-full max-w-7xl mx-auto col-span-3">
           <CardHeader>
             <div className="flex justify-between">
               <div>
-                <CardTitle>
                   <Skeleton className="h-8 w-48" />
-                </CardTitle>
-                <CardDescription>
                   <Skeleton className="h-4 w-64 mt-2" />
-                </CardDescription>
               </div>
-              <Button
-                variant="destructive"
-                className="flex items-center gap-x-2 mt-auto"
-                disabled
-              >
-                <Trash />
-                Borrar
-              </Button>
+              <Skeleton className="w-32 h-10" />
             </div>
           </CardHeader>
           <CardContent>
@@ -61,7 +45,7 @@ export default function FormVehicleSkeleton() {
         <footer className="col-span-full mt-3">
           <Skeleton className="w-full h-10" />
         </footer>
-      </form>
+      </div>
     </div>
   );
 }
