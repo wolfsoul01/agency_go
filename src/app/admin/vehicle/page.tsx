@@ -6,11 +6,17 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/shared/modal";
+import FormVeihcle from "./components/form-vehicle";
 
 function Vehicle() {
-  const { data, isFetching } = useVehicle();
+  const { data, isFetching ,refetch} = useVehicle();
 
   const [showModal, setShowModal] = useState(false);
+
+  const callback = ()=>{
+    setShowModal(false)
+    refetch()
+  }
   return (
     <section>
       <header className="flex justify-between">
@@ -36,8 +42,8 @@ function Vehicle() {
         />
       </div>
 
-      <Modal open={showModal} close={() => setShowModal(false)}>
-        <h1>Hola</h1>
+      <Modal open={showModal} close={() => setShowModal(false)} size="3xl">
+        <FormVeihcle  callback={callback}/>
       </Modal>
     </section>
   );

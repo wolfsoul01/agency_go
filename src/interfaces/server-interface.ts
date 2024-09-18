@@ -15,3 +15,15 @@ export interface Image {
   url: string;
   description: string;
 }
+
+export interface Card {
+  id:          number;
+  title:       string;
+  make:        string;
+  model:       string;
+  status:      string;
+  type:        string;
+  year:        number;
+  priceForDay: number;
+  available:   boolean;
+}

@@ -9,9 +9,9 @@ interface Props {
 export const StatusVehicles = ({ status }: Props) => {
   const getText = () => {
     switch (status) {
-      case "Ok":
+      case "OK":
         return "Buen estado";
-      case "Broken":
+      case "BROKEN":
         return "Averiado";
       default:
         return "Desconocido";
@@ -20,9 +20,9 @@ export const StatusVehicles = ({ status }: Props) => {
 
   const getColor = () => {
     switch (status) {
-      case "Ok":
+      case "OK":
         return "bg-green-500 text-white";
-      case "Broken":
+      case "BROKEN":
         return "bg-red-500 text-white";
       default:
         return "";

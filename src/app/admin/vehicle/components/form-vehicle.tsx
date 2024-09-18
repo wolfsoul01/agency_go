@@ -6,7 +6,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Loader2Icon, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@radix-ui/react-checkbox";
 import {
   Card,
   CardContent,
@@ -14,50 +13,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Driver } from "@/interfaces/server-interface";
-import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { FormSelect, SelectItem } from "@/components/form/form-select";
 import query from "@/lib/axios.config";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import ProfilePhotoUpload from "@/components/shared/profile-photo-upload";
+
 
 const formSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  license: z.string().min(10).max(25),
-  age: z.string().transform(Number),
-  phoneNumber: z.string().optional(),
-  typeLicense: z.enum(["A", "B", "C1", "D1", "D"]),
+  title: z.string(),
+  make: z.string(),
+  model: z.string(),
+  status: z.string().default("OK"),
+  year: z.preprocess(Number, z.number().int().positive()),
+  priceForDay: z.preprocess(Number, z.number().int().positive().default(0)),
+  type: z.enum(["A", "B", "C1", "D1", "D"]),
 });
 type IForm = z.infer<typeof formSchema>;
 
 interface Props {
   callback?: () => void;
-  defaultValue?: Driver;
+  defaultValue?: any;
 }
 
-function FormDriver(props: Props) {
+function FormVeihcle(props: Props) {
   const { callback, defaultValue } = props;
 
   const router = useRouter();
 
+
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: defaultValue?.firstName,
-      lastName: defaultValue?.lastName,
-      license: defaultValue?.license,
-      age: defaultValue?.age,
-      phoneNumber: defaultValue?.phoneNumber,
-      typeLicense: defaultValue?.typeLicense,
+      title: defaultValue?.title,
+      make: defaultValue?.make,
+      status: defaultValue?.status,
+      model: defaultValue?.model,
+      year: defaultValue?.year,
+      priceForDay: defaultValue?.priceForDay,
+      type: defaultValue?.type,
     },
   });
 
-  const { handleSubmit, control } = form;
+  const { handleSubmit, control, watch } = form;
+  console.log(watch());
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
 
@@ -67,25 +67,25 @@ function FormDriver(props: Props) {
       console.log(data);
       try {
         defaultValue
-          ? await query.patch(`/driver/${defaultValue.id}`, {
+          ? await query.patch(`/vehicles/${defaultValue.id}`, {
               ...data,
             })
-          : await query.post("/driver", {
+          : await query.post("/vehicles", {
               ...data,
             });
+
+        toast.success(
+          defaultValue
+            ? "Driver update  successfully"
+            : "Driver added successfully"
+        );
+        callback && callback();
       } catch (error: any) {
         toast.error(error.message);
       }
-
-      callback && callback();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
-      toast.success(
-        defaultValue
-          ? "Driver update  successfully"
-          : "Driver added successfully"
-      );
       setIsLoading(false);
     }
   };
@@ -93,7 +93,7 @@ function FormDriver(props: Props) {
   const handleDeleted = async (id: number) => {
     setIsDeleted(true);
     try {
-      await query.delete(`/driver/${id}`).finally(() => setIsDeleted(false));
+      await query.delete(`/vehicles/${id}`).finally(() => setIsDeleted(false));
       router.back();
     } catch (error: any) {
       toast.error(error.message);
@@ -126,45 +126,55 @@ function FormDriver(props: Props) {
       label: "D1 (Microbuses de transporte de pasajeros)",
     },
   ];
+
+  const statusSelect: SelectItem[] = [
+    {
+      label: "Buen Estado",
+      value: "OK",
+    },
+    {
+      label: "Averiado",
+      value: "BROKEN",
+    },
+    {
+      label: "Desconocido",
+      value: "SOLD",
+    },
+  ];
+
   return (
     <div>
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-1 md:grid-cols-4  gap-x-5 gap-y-3 "
+          className="grid grid-cols-1   gap-x-5 gap-y-3 "
         >
-          <Card>
-            <CardContent className=" flex flex-col justify-between h-full  p-10">
-              <ProfilePhotoUpload />
-
-              {defaultValue && (
-                <Button
-                  variant={"destructive"}
-                  className="flex items-center gap-x-2 mt-auto"
-                  onClick={() => handleDeleted(defaultValue?.id as number)}
-                  type="button"
-                  disabled={isDeleted}
-                >
-                  {" "}
-                  {isDeleted ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    <Trash />
-                  )}{" "}
-                  Borrar
-                </Button>
-              )}
-            </CardContent>
-          </Card>
           <Card className="w-full max-w-7xl mx-auto col-span-3">
             <CardHeader>
               <div className="flex justify-between   ">
                 <div>
-                  <CardTitle>Formulario de Conductor</CardTitle>
+                  <CardTitle>Formulario de Autos</CardTitle>
                   <CardDescription>
-                    Por favor, ingrese los detalles del conductor.
+                    Por favor, ingrese los detalles del auto.
                   </CardDescription>
                 </div>
+                {defaultValue && (
+                  <Button
+                    variant={"destructive"}
+                    className="flex items-center gap-x-2 mt-auto"
+                    onClick={() => handleDeleted(defaultValue?.id as number)}
+                    type="button"
+                    disabled={isDeleted}
+                  >
+                    {" "}
+                    {isDeleted ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <Trash />
+                    )}{" "}
+                    Borrar
+                  </Button>
+                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -173,58 +183,52 @@ function FormDriver(props: Props) {
                   <div className="space-y-2">
                     <FormInput
                       control={control}
-                      name="firstName"
-                      label="Nombre"
+                      name="title"
+                      label="Titulo"
                       className=""
                     />
                   </div>
                   <div className="space-y-2">
-                    <FormInput
-                      control={control}
-                      name="lastName"
-                      label="Apellidos"
-                    />
+                    <FormInput control={control} name="make" label="Marca" />
+                  </div>
+                  <div className="space-y-2">
+                    <FormInput control={control} name="model" label="Modelo" />
                   </div>
                   <div className="space-y-2">
                     <FormInput
                       control={control}
-                      name="age"
+                      name="priceForDay"
+                      label="Precio por dia"
                       type="number"
-                      label="Edad"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormInput
-                      control={control}
-                      name="phoneNumber"
-                      label="Teléfono"
                     />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <FormInput
+                    <FormSelect
                       control={control}
-                      name="license"
-                      label="Licencia"
+                      name="status"
+                      label="Estado"
+                      selectItem={statusSelect}
                     />
                   </div>
                   <div className="space-y-2">
                     <FormSelect
                       control={control}
-                      name="typeLicense"
+                      name="type"
                       label="Tipo de licencia"
                       selectItem={dataSelect}
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="activo" />
-                    <Label>Conductor Activo</Label>
+                  <div className=" w-full">
+                    <FormInput
+                      control={control}
+                      name="year"
+                      label="Año"
+                      type="number"
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Foto del Conductor</Label>
-                    <Input id="foto" type="file" accept="image/*" />
-                  </div>
+                 
                 </div>
               </div>
             </CardContent>
@@ -246,4 +250,4 @@ function FormDriver(props: Props) {
   );
 }
 
-export default FormDriver;
+export default FormVeihcle;
