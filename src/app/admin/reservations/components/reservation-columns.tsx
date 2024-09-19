@@ -14,23 +14,25 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import defaultImage from "@/assets/user-default.jpg";
+import { Reservation } from "@/interfaces/server-interface";
 
-export const columnsReservation: ColumnDef<any>[] = [
+export const columnsReservation: ColumnDef<Reservation>[] = [
   {
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cliente" />
     ),
     accessorKey: "user",
     cell: ({ row }) => {
-      const { user } = row.original;
+      const { user, room } = row.original;
+
       return (
         <div className="flex items-center gap-x-3">
           <img
-            src={user?.image?.url ?? defaultImage.src}
+            src={room?.Image?.url ?? defaultImage.src}
             alt="User"
             className="size-10 rounded-full"
           />{" "}
-          {user.name} 
+          {user.name}
         </div>
       );
     },

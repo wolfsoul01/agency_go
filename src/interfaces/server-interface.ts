@@ -90,3 +90,28 @@ export interface Address {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+export interface Reservation {
+  id:        number;
+  startDate: Date;
+  endDate:   Date;
+  days:      number;
+  totalCost: number;
+  type:      string;
+  status:    string;
+  userId:    number;
+  roomId:    number;
+  carId:     number;
+  driverId:  number;
+  room:      Room;
+  user:      User;
+  car:       Card;
+}
+
+export interface SummaryReservations {
+  totalReservations:     number;
+  totalCost:             number;
+  totalReservationsCar:  number;
+  totalReservationsRoom: number;
+}
