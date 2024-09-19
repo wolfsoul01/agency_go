@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { Slider } from "@/components/ui/slider"
 import defaultImage from "@/assets/placeholder.png";
 
 export default function ReservaPage() {
