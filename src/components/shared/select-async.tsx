@@ -12,12 +12,18 @@ import { type SelectItem as SelectItemI } from "../form/form-select";
 interface AsyncSelectProps {
   onFetch: () => Promise<SelectItemI[] | undefined>;
   onSelect: (value: string) => void;
+  field: string | undefined;
+  dependencies?: string | number;
 }
 
-const AsyncSelect: React.FC<AsyncSelectProps> = ({ onFetch, onSelect }) => {
+const AsyncSelect: React.FC<AsyncSelectProps> = ({
+  onFetch,
+  onSelect,
+  field,
+  dependencies,
+}) => {
   const [options, setOptions] = useState<SelectItemI[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
   // Fetch data when the component mounts
   const fetchOptions = async () => {
     setLoading(true);
@@ -32,13 +38,26 @@ const AsyncSelect: React.FC<AsyncSelectProps> = ({ onFetch, onSelect }) => {
   };
 
   React.useEffect(() => {
+    if (dependencies) {
+      fetchOptions();
+      return;
+    }
+
     if (options.length === 0) {
       fetchOptions();
+      return;
     }
-  }, [onFetch]);
+  }, [onFetch, dependencies]);
+
+  console.log("field", field);
+  console.log("options", options);
 
   return (
-    <Select onValueChange={onSelect} disabled={options.length === 0}>
+    <Select
+      onValueChange={onSelect}
+      disabled={options.length === 0}
+      defaultValue={field?.toString()}
+    >
       <SelectTrigger>
         <SelectValue placeholder={loading ? "Cargando..." : "Seleccione..."} />
       </SelectTrigger>

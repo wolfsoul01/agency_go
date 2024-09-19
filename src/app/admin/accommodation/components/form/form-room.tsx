@@ -39,6 +39,7 @@ function FormRoom(props: Props) {
       city: defaultValue?.Address?.city || "",
       provinceId: defaultValue?.Address?.provinceId,
       municipalityId: defaultValue?.Address?.municipalityId,
+      street_1: defaultValue?.Address?.street_1 || "",
     },
   });
 
@@ -76,7 +77,6 @@ function FormRoom(props: Props) {
     { value: "AVAILABLE", label: "Disponible" },
     { value: "OCCUPIED", label: "Ocupada" },
     { value: "MAINTENANCE", label: "En Mantenimiento" },
-    { value: "RESERVED", label: "Reservada" },
     { value: "OUT_OF_SERVICE", label: "Fuera de Servicio" },
   ];
 
@@ -183,7 +183,7 @@ function FormRoom(props: Props) {
                       <FormAsyncSelect
                         control={control}
                         name="provinceId"
-                        label="Municipio"
+                        label="Provincia"
                         onFetch={onFetch}
                       />
                     </div>
@@ -191,8 +191,9 @@ function FormRoom(props: Props) {
                       <FormAsyncSelect
                         control={control}
                         name="municipalityId"
-                        label="Provincia"
+                        label="Municipio"
                         onFetch={() => on(provinceId?.toString())}
+                        dependencies={provinceId}
                       />
                     </div>
 

@@ -16,13 +16,15 @@ interface FormInputProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;
   label: React.ReactNode;
   onFetch: () => Promise<SelectItem[] | undefined>;
+  dependencies?: string | number;
 }
 
 export function FormAsyncSelect<TFieldValues extends FieldValues>({
   name,
   control,
   label,
-  onFetch
+  onFetch,
+  dependencies
 }: FormInputProps<TFieldValues>) {
   return (
     <FormField
@@ -33,7 +35,12 @@ export function FormAsyncSelect<TFieldValues extends FieldValues>({
           <FormLabel className="font-medium">{label}</FormLabel>
           <FormControl>
             <>
-              <AsyncSelect onFetch={onFetch} onSelect={field.onChange} />
+              <AsyncSelect
+                onFetch={onFetch}
+                onSelect={field.onChange}
+                field={field.value}
+                dependencies={dependencies}
+              />
             </>
           </FormControl>
           <FormMessage />
