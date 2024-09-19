@@ -5,7 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import React, { useState } from "react";
 import { columnsReservation } from "./components/reservation-columns";
 import { useReservations } from "./hooks/useReservations";
-import { addDays } from "date-fns";
+import { addDays} from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calculator, CalendarDays, Car, HousePlus, Users } from "lucide-react";
 import { useSummaryReservation } from "./hooks/useSummaryReservations";
@@ -20,8 +20,6 @@ function Reservations() {
 
   const { data: summary } = useSummaryReservation(date);
 
-  console.log(summary);
-
   return (
     <section className="space-y-6">
       <header>
@@ -35,6 +33,7 @@ function Reservations() {
             selected={date}
             onSelect={setDate}
             className="rounded-md border"
+            onMonthChange={(date) => setDate(date)}
           />
 
           {

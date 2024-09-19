@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import query from "@/lib/axios.config";
 import { SummaryReservations } from "@/interfaces/server-interface";
+import { getMonth } from "date-fns";
 
 const fetchReservations = async (date?: Date) => {
   const response = await query.get(`/reservations/summary`, {
@@ -11,8 +12,13 @@ const fetchReservations = async (date?: Date) => {
 };
 
 export const useSummaryReservation = (date?: Date) => {
+
+    const moth = getMonth(date as Date);
+
+    console.log(moth);
+
   const query = useQuery<SummaryReservations>({
-    queryKey: ["reservations", "summary", date],
+    queryKey: ["reservations", "summary", moth],
     queryFn: () => fetchReservations(date),
     initialData: {
       totalCost: 0,

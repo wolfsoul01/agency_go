@@ -85,33 +85,44 @@ export interface Address {
   postalCode: string;
   municipalityId: number;
   provinceId: number;
-  Provinces :Provinces | null;
-  Municipalities :Municipalities | null;
+  Provinces: Provinces | null;
+  Municipalities: Municipalities | null;
   createdAt: Date;
   updatedAt: Date;
 }
+export enum ReservationStatus {
+  Pending = "Pending",
+  Confirmed = "Confirmed",
+  Cancelled = "Cancelled",
+  Completed = "Completed",
+}
 
+export enum TypeReservation {
+  CAR = "CAR",
+  ROOM = "ROOM",
+  TRAVEL = "TRAVEL",
+}
 
 export interface Reservation {
-  id:        number;
+  id: number;
   startDate: Date;
-  endDate:   Date;
-  days:      number;
+  endDate: Date;
+  days: number;
   totalCost: number;
-  type:      string;
-  status:    string;
-  userId:    number;
-  roomId:    number;
-  carId:     number;
-  driverId:  number;
-  room:      Room;
-  user:      User;
-  car:       Card;
+  type: TypeReservation;
+  status: ReservationStatus;
+  userId: number;
+  roomId: number;
+  carId: number;
+  driverId: number;
+  room: Room;
+  user: User;
+  car: Card;
 }
 
 export interface SummaryReservations {
-  totalReservations:     number;
-  totalCost:             number;
-  totalReservationsCar:  number;
+  totalReservations: number;
+  totalCost: number;
+  totalReservationsCar: number;
   totalReservationsRoom: number;
 }

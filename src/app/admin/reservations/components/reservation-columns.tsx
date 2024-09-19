@@ -15,6 +15,8 @@ import { Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import defaultImage from "@/assets/user-default.jpg";
 import { Reservation } from "@/interfaces/server-interface";
+import ReservationStatusBadge from "./reservation-status";
+import ReservationTypeBadge from "./reservation-type";
 
 export const columnsReservation: ColumnDef<Reservation>[] = [
   {
@@ -55,9 +57,17 @@ export const columnsReservation: ColumnDef<Reservation>[] = [
   },
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Días" />
+      <DataTableColumnHeader
+        column={column}
+        title="Días"
+        className="flex justify-center"
+      />
     ),
     accessorKey: "days",
+    cell: ({ row }) => {
+      const { days } = row.original;
+      return <div className="flex justify-center">{days}</div>;
+    },
   },
   {
     header: ({ column }) => (
@@ -70,19 +80,19 @@ export const columnsReservation: ColumnDef<Reservation>[] = [
     },
   },
   {
-    header: "Estado",
+    header: () => <span className="flex justify-center">Estado</span>,
     accessorKey: "status",
     cell: ({ row }) => {
       const { status } = row.original;
-      return <div className="capitalize">{status}</div>;
+      return <ReservationStatusBadge status={status} />;
     },
   },
   {
-    header: "Tipo",
+    header: () => <span className="flex justify-center">Tipo</span>,
     accessorKey: "type",
     cell: ({ row }) => {
       const { type } = row.original;
-      return <div className="capitalize">{type}</div>;
+      return <ReservationTypeBadge type={type} />;
     },
   },
   {
