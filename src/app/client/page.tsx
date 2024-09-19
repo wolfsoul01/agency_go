@@ -1,298 +1,189 @@
+import * as React from "react";
+import { CalendarIcon, CarIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  CalendarDaysIcon,
-  CarIcon,
-  MountainIcon,
-  UserIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+// import { Slider } from "@/components/ui/slider"
+import defaultImage from "@/assets/placeholder.png";
 
-const data = [
-  {
-    name: "Ene",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Abr",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-];
-
-export default function Component() {
+export default function ReservaPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link className="flex items-center justify-center" href="#">
-          <MountainIcon className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#"
-          >
-            Habitaciones
-          </Link>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#"
-          >
-            Autos
-          </Link>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#"
-          >
-            Choferes
-          </Link>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#"
-          >
-            Contacto
-          </Link>
-        </nav>
-      </header>
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-black">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white">
-                  Tu destino para rentas y servicios de calidad
-                </h1>
-                <p className="mx-auto max-w-[700px] text-gray-300 md:text-xl">
-                  Habitaciones confortables, autos confiables y choferes
-                  profesionales para hacer tu viaje inolvidable.
-                </p>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">
+        Reserva tu Alojamiento y Transporte
+      </h1>
+
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <Tabs defaultValue="alojamiento" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="alojamiento">Alojamiento</TabsTrigger>
+              <TabsTrigger value="autos">Autos</TabsTrigger>
+            </TabsList>
+            <TabsContent value="alojamiento">
+              <div className="flex flex-wrap gap-4">
+                <Input className="flex-grow" placeholder="¿A dónde vas?" />
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="text-muted-foreground" />
+                  <Input type="date" className="w-40" placeholder="Llegada" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="text-muted-foreground" />
+                  <Input type="date" className="w-40" placeholder="Salida" />
+                </div>
+                <Select>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Huéspedes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 huésped</SelectItem>
+                    <SelectItem value="2">2 huéspedes</SelectItem>
+                    <SelectItem value="3">3 huéspedes</SelectItem>
+                    <SelectItem value="4">4+ huéspedes</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button className="w-full sm:w-auto">
+                  <SearchIcon className="mr-2 h-4 w-4" /> Buscar
+                </Button>
               </div>
-              <div className="space-x-4">
-                <Button>Reserva ahora</Button>
-                <Button variant="outline">Aprende más</Button>
+            </TabsContent>
+            <TabsContent value="autos">
+              <div className="flex flex-wrap gap-4">
+                <Input className="flex-grow" placeholder="Lugar de recogida" />
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="text-muted-foreground" />
+                  <Input
+                    type="date"
+                    className="w-40"
+                    placeholder="Fecha de recogida"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="text-muted-foreground" />
+                  <Input
+                    type="date"
+                    className="w-40"
+                    placeholder="Fecha de devolución"
+                  />
+                </div>
+                <Button className="w-full sm:w-auto">
+                  <SearchIcon className="mr-2 h-4 w-4" /> Buscar Autos
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Filtros</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="price-range">Rango de Precio</Label>
+                {/* <Slider
+                  id="price-range"
+                  defaultValue={[0, 1000]}
+                  max={1000}
+                  step={10}
+                  className="mt-2"
+                /> */}
+              </div>
+              <div>
+                <Label htmlFor="rating">Calificación mínima</Label>
+                <Select>
+                  <SelectTrigger id="rating">
+                    <SelectValue placeholder="Seleccionar calificación" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="3">3 estrellas</SelectItem>
+                    <SelectItem value="4">4 estrellas</SelectItem>
+                    <SelectItem value="5">5 estrellas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Servicios</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <Button variant="outline" className="justify-start">
+                    <CarIcon className="mr-2 h-4 w-4" /> Estacionamiento
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    WiFi
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    Piscina
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    Gimnasio
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
-              Nuestros servicios
-            </h2>
-            <div className="grid gap-6 lg:grid-cols-3">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Habitaciones</CardTitle>
-                  <CardDescription>
-                    Confort y comodidad garantizados
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <CalendarDaysIcon className="w-16 h-16 mb-4" />
-                  <p>
-                    Amplia variedad de habitaciones para todos los gustos y
-                    presupuestos.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button>Ver habitaciones</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Autos</CardTitle>
-                  <CardDescription>Movilidad a tu alcance</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <CarIcon className="w-16 h-16 mb-4" />
-                  <p>
-                    Flota de vehículos modernos y bien mantenidos para tu
-                    comodidad.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button>Ver autos</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Choferes</CardTitle>
-                  <CardDescription>
-                    Experiencia y profesionalismo
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <UserIcon className="w-16 h-16 mb-4" />
-                  <p>
-                    Conductores expertos para llevarte a donde necesites con
-                    seguridad.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button>Ver choferes</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </div>
-        </section>
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
-              Estadísticas de reservas
-            </h2>
-            <Tabs defaultValue="habitaciones" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="habitaciones">Habitaciones</TabsTrigger>
-                <TabsTrigger value="autos">Autos</TabsTrigger>
-                <TabsTrigger value="choferes">Choferes</TabsTrigger>
-              </TabsList>
-              <TabsContent value="habitaciones">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Reservas de habitaciones</CardTitle>
-                    <CardDescription>
-                      Número de reservas en los últimos 6 meses
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <BarChart data={data}>
-                        <XAxis
-                          dataKey="name"
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                          tickFormatter={(value) => `${value}`}
-                        />
-                        <Bar
-                          dataKey="total"
-                          fill="#adfa1d"
-                          radius={[4, 4, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="autos">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Reservas de autos</CardTitle>
-                    <CardDescription>
-                      Número de reservas en los últimos 6 meses
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <BarChart data={data}>
-                        <XAxis
-                          dataKey="name"
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                          tickFormatter={(value) => `${value}`}
-                        />
-                        <Bar
-                          dataKey="total"
-                          fill="#2563eb"
-                          radius={[4, 4, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="choferes">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Reservas de choferes</CardTitle>
-                    <CardDescription>
-                      Número de reservas en los últimos 6 meses
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <BarChart data={data}>
-                        <XAxis
-                          dataKey="name"
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis
-                          stroke="#888888"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                          tickFormatter={(value) => `${value}`}
-                        />
-                        <Bar
-                          dataKey="total"
-                          fill="#f97316"
-                          radius={[4, 4, 0, 0]}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-      </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          © 2024 Acme Inc. Todos los derechos reservados.
-        </p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Términos de servicio
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Privacidad
-          </Link>
-        </nav>
-      </footer>
+          </CardContent>
+        </Card>
+        <div className="md:col-span-3 space-y-6">
+          {[1, 2, 3].map((item) => (
+            <Card key={item}>
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <img
+                    src={defaultImage.src}
+                    alt="Imagen del alojamiento"
+                    className="rounded-lg object-cover w-full sm:w-1/3"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">
+                      Hotel Ejemplo {item}
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Ubicación céntrica, a 5 min de la playa
+                    </p>
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <div className="flex items-center">
+                          {[...Array(4)].map((_, i) => (
+                            <svg
+                              key={i}
+                              className="w-5 h-5 text-yellow-400"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                          <span className="ml-2 text-sm text-muted-foreground">
+                            4.0 (250 reseñas)
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">
+                          Precio por noche desde
+                        </p>
+                        <p className="text-2xl font-bold">$120</p>
+                        <Button className="mt-2">Reservar ahora</Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
