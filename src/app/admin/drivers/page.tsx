@@ -22,7 +22,7 @@ function Drivers() {
   return (
     <section>
       <header className="flex items-center justify-between ">
-        <Label className="text-2xl">Drivers</Label>
+        <Label className="text-2xl">Choferes</Label>
 
         <div>
           <Button

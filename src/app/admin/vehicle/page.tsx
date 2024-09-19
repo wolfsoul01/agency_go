@@ -7,6 +7,7 @@ import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/shared/modal";
 import FormVeihcle from "./components/form-vehicle";
+import { Label } from "@/components/ui/label";
 
 function Vehicle() {
   const { data, isFetching ,refetch} = useVehicle();
@@ -20,7 +21,7 @@ function Vehicle() {
   return (
     <section>
       <header className="flex justify-between">
-        <div></div>
+      <Label className="text-2xl">Vehículos</Label>
 
         <aside>
           <Button

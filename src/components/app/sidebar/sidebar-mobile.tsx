@@ -8,8 +8,6 @@ import { Package2 } from "lucide-react";
 function SidebarMobile() {
   const pathname = usePathname();
 
-  console.log(pathname);
-
   return (
     <div className="flex-1">
       <nav className="grid gap-2 text-lg font-medium">
@@ -27,7 +25,7 @@ function SidebarMobile() {
               href={item.href}
               className={cn(
                 "mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground",
-                pathname.includes(item.href) && "bg-muted text-primary"
+                pathname.endsWith(item.href) && "bg-muted text-primary"
               )}
             >
               {item.icon}

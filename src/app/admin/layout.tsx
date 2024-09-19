@@ -26,14 +26,19 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { token, user } = useSessionStore.getState();
+  const { token, user, clearSession } = useSessionStore.getState();
   const router = useRouter();
 
   useEffect(() => {
-    if (!token) {
+    if (!token || user?.role === "USER") {
       router.replace("/");
     }
   }, [router, token]);
+
+  const logout = () => {
+    clearSession();
+    router.replace("/");
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -85,10 +90,10 @@ export default function DashboardLayout({
                   {user?.name}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
+                  Cerrar Sesión
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
