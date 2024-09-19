@@ -3,7 +3,7 @@
 import { FormInput } from "@/components/form/form-input";
 import React, { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {  Loader2, Loader2Icon, Trash } from "lucide-react";
+import { Loader2, Loader2Icon, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,7 +25,6 @@ import { FormTextArea } from "@/components/form/form-text-area";
 import { manageError } from "@/lib/manege-error";
 import { formSchemaRoom, IFormRoom } from "./form-shcema";
 
-
 interface Props {
   callback?: () => void;
   defaultValue?: Room;
@@ -44,10 +43,13 @@ function FormRoom(props: Props) {
       totalPersons: defaultValue?.totalPersons || 1,
       pricePerNight: defaultValue?.pricePerNight || 0,
       status: defaultValue?.status || "AVAILABLE",
+      city: defaultValue?.Address?.city || "",
+      provinceId: defaultValue?.Address?.provinceId,
+      municipalityId: defaultValue?.Address?.municipalityId,
     },
   });
 
-  //States 
+  //States
   const { handleSubmit, control, watch } = form;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
@@ -204,7 +206,22 @@ function FormRoom(props: Props) {
                     control={control}
                     name="municipalityId"
                     label="Provincia"
-                    onFetch={() => on(provinceId)}
+                    onFetch={() => on(provinceId?.toString())}
+                  />
+                </div>
+
+                <div>
+                  <FormInput
+                    control={control}
+                    name="street_1"
+                    label="Dirección"
+                  />
+                </div>
+                <div>
+                  <FormInput
+                    control={control}
+                    name="city"
+                    label="Localidad"
                   />
                 </div>
 
@@ -225,17 +242,6 @@ function FormRoom(props: Props) {
                 <RoomImageUpload
                   roomId={defaultValue?.id}
                   defaultImageUrl={defaultValue?.Image?.url}
-                  //   onUpload={async (file: File) => {
-                  //     const formData = new FormData();
-                  //     formData.append("file", file);
-                  //     formData.append(
-                  //       "roomId",
-                  //       defaultValue?.id.toString() ?? ""
-                  //     );
-
-                  //     await query.post("/room/upload", formData);
-                  //   }}
-                  //   defaultImage={defaultValue?.image?.url}
                 />
               </CardContent>
             </Card>

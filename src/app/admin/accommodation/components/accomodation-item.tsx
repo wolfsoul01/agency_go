@@ -19,7 +19,14 @@ interface Props {
 export default function AccommodationItem(props: Props) {
   const { room } = props;
 
-  const { Image, totalPersons, name, pricePerNight, description } = room;
+  const {
+    Image,
+    totalPersons,
+    name,
+    pricePerNight,
+    description,
+    Address: address,
+  } = room;
 
   const handleNavigation = () => {
     window.location.href = `accommodation/${room.id}`;
@@ -47,11 +54,12 @@ export default function AccommodationItem(props: Props) {
         <CardTitle className="text-lg font-semibold mb-2">{name}</CardTitle>
         <div className="flex items-center text-sm text-gray-500 mb-1">
           <MapPinIcon className="w-4 h-4 mr-1" />
-          {description}
+          {address?.street_1}/{address?.city}/{address?.Municipalities?.name}/
+          {address?.Provinces?.name}
         </div>
         <div className="flex items-center text-sm text-gray-500 mb-1">
           <CalendarIcon className="w-4 h-4 mr-1" />
-          {description}
+          <span className="truncate ">{description}</span>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center">

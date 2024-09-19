@@ -54,23 +54,39 @@ export interface Room {
   createdAt: Date;
   updatedAt: Date;
   Image: Image;
+  Address: Address | null;
 }
 
-
 export interface Municipalities {
-  id:         number;
-  name:       string;
-  code:       string;
+  id: number;
+  name: string;
+  code: string;
   provinceId: number;
-  createdAt:  null;
-  updatedAt:  null;
+  createdAt: null;
+  updatedAt: null;
 }
 
 export interface Provinces {
-  id:        number;
-  name:      string;
-  code:      string;
+  id: number;
+  name: string;
+  code: string;
   countryId: null;
   createdAt: null;
   updatedAt: null;
+}
+
+export interface Address {
+  id: number;
+  street_1: string;
+  description: string;
+  city: string;
+  coordinateLatitude: string;
+  coordinateLongitude: string;
+  postalCode: string;
+  municipalityId: number;
+  provinceId: number;
+  Provinces :Provinces | null;
+  Municipalities :Municipalities | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -18,8 +18,10 @@ export const formSchemaRoom = z.object({
       "RESERVED",
       "OUT_OF_SERVICE",
     ]),
-    municipalityId: z.string().optional(),
-    provinceId: z.string().optional(),
+    municipalityId: z.preprocess(Number,z.number().optional()),
+    provinceId: z.preprocess(Number,z.number().optional()),
+    city : z.string().optional(),
+    street_1 : z.string().optional(),
   });
   
   export type IFormRoom = z.infer<typeof formSchemaRoom>;
