@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import Modal from "@/components/shared/modal";
 import FormRoom from "./components/form/form-room";
 import { useRooms } from "./hooks/useRooms";
+import AccommodationSkeleton from "./components/accommodation-skeleton";
 
 function Accommodation() {
   const [showModal, setShowModal] = useState(false);
 
-  const { data, refetch } = useRooms();
+  const { data, refetch, isFetching } = useRooms();
   const callback = () => {
     setShowModal(false);
     refetch();
@@ -32,13 +33,11 @@ function Accommodation() {
         </aside>
       </header>
 
-      <RoomView rooms={data} />
-
+      {isFetching ? <AccommodationSkeleton /> : <RoomView rooms={data} />}
 
       <Modal size="4xl" open={showModal} close={() => setShowModal(false)}>
         <FormRoom callback={callback} />
       </Modal>
-
     </section>
   );
 }
