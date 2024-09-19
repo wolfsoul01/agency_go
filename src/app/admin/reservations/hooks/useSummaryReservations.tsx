@@ -12,10 +12,9 @@ const fetchReservations = async (date?: Date) => {
 };
 
 export const useSummaryReservation = (date?: Date) => {
+  const moth = getMonth(date as Date);
 
-    const moth = getMonth(date as Date);
-
-    console.log(moth);
+  console.log(moth);
 
   const query = useQuery<SummaryReservations>({
     queryKey: ["reservations", "summary", moth],
@@ -27,6 +26,7 @@ export const useSummaryReservation = (date?: Date) => {
       totalReservationsRoom: 0,
     },
     enabled: !!date,
+    //staleTime: 0,
   });
 
   return {
