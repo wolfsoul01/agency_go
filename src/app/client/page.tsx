@@ -13,15 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import defaultImage from "@/assets/placeholder.png";
+import { DatePicker } from "@/components/shared/date-picker";
 
 export default function ReservaPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Reserva tu Alojamiento y Transporte
-      </h1>
+    <div className="container mx-auto px-4 py-4">
+      
 
-      <Card className="mb-8">
+      <Card className="mb-8 ">
         <CardContent className="p-6">
           <Tabs defaultValue="alojamiento" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -33,11 +32,11 @@ export default function ReservaPage() {
                 <Input className="flex-grow" placeholder="¿A dónde vas?" />
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
-                  <Input type="date" className="w-40" placeholder="Llegada" />
+                  <DatePicker />
                 </div>
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
-                  <Input type="date" className="w-40" placeholder="Salida" />
+                  <DatePicker />
                 </div>
                 <Select>
                   <SelectTrigger className="w-40">

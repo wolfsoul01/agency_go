@@ -41,13 +41,20 @@ export default function DashboardLayout({
     <QueryClientProvider client={queryClient}>
       <div className="grid min-h-screen w-full ">
         <div className="flex flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-            <div className="w-full flex-1 flex gap-x-3">
+          <header className="flex h-16 items-center justify-evenly gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+
+            <div className="flex  gap-x-3">
               <Link href="/" className="flex items-center gap-2 font-semibold">
                 <Package2 className="h-6 w-6" />
                 <span className="">Agency-Go</span>
               </Link>
               <ModeToggle />
+            </div>
+
+            <div className="flex pr-12 py-2 mx-auto h-full  ">
+              <h1 className="text-4xl font-bold mb-8 text-center">
+                Reserva tu Alojamiento y Transporte
+              </h1>
             </div>
 
             <DropdownMenu>
