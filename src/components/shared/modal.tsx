@@ -38,7 +38,7 @@ function Modal(props: Props) {
   const { open, title, close, children, description, size = "md" } = props;
   return (
     <Dialog open={open} onOpenChange={close}>
-      <DialogContent className={cn(modalVariants({ size }), "overflow-y-auto")}>
+      <DialogContent className={cn(modalVariants({ size }), "overflow-y-auto max-h-[90vh] scroll-p-3")}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

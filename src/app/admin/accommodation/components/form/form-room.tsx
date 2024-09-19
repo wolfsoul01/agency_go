@@ -3,27 +3,22 @@
 import { FormInput } from "@/components/form/form-input";
 import React, { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Loader2Icon, Trash } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Provinces, Room } from "@/interfaces/server-interface";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { FormSelect, SelectItem } from "@/components/form/form-select";
 import query from "@/lib/axios.config";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import RoomImageUpload from "../room-image-upload";
 import { FormAsyncSelect } from "@/components/form/form-async-select";
 import { FormTextArea } from "@/components/form/form-text-area";
 import { manageError } from "@/lib/manege-error";
 import { formSchemaRoom, IFormRoom } from "./form-shcema";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FormRoomHeader from "./form-header";
 
 interface Props {
   callback?: () => void;
@@ -32,8 +27,6 @@ interface Props {
 
 function FormRoom(props: Props) {
   const { callback, defaultValue } = props;
-
-  const router = useRouter();
 
   const form = useForm<IFormRoom>({
     resolver: zodResolver(formSchemaRoom),
@@ -52,7 +45,6 @@ function FormRoom(props: Props) {
   //States
   const { handleSubmit, control, watch } = form;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
 
   //Form state
   const provinceId = watch("provinceId");
@@ -77,16 +69,6 @@ function FormRoom(props: Props) {
       toast.error(error.message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleDeleted = async (id: number) => {
-    setIsDeleted(true);
-    try {
-      await query.delete(`/room/${id}`).finally(() => setIsDeleted(false));
-      router.back();
-    } catch (error: any) {
-      toast.error(error.message);
     }
   };
 
@@ -130,111 +112,109 @@ function FormRoom(props: Props) {
     [provinceId]
   );
 
+  enum TabsValues {
+    INFORMATION = "INFORMATION",
+    ADDRESS = "ADDRESS",
+  }
+
   return (
     <div>
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-1 gap-x-5 gap-y-3 max-w-7xl"
+          className="grid grid-cols-1 gap-x-5 gap-y-3 max-w-7xl  "
         >
-          <Card className="w-full  mx-auto  ">
-            <CardHeader>
-              <div className="flex ice justify-between">
-                <div>
-                  <CardTitle>Formulario de Habitación</CardTitle>
-                  <CardDescription>
-                    Por favor, ingrese los detalles de la habitación.
-                  </CardDescription>
-                </div>
+          <Tabs defaultValue={TabsValues.INFORMATION}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value={TabsValues.INFORMATION}>
+                Información
+              </TabsTrigger>
+              <TabsTrigger value={TabsValues.ADDRESS}>Dirección</TabsTrigger>
+            </TabsList>
+            <TabsContent value={TabsValues.INFORMATION}>
+              <Card className="w-full  mx-auto  ">
+                <FormRoomHeader defaultValue={defaultValue} />
 
-                {defaultValue && (
-                  <div>
-                    <Button
-                      variant={"destructive"}
-                      className="flex items-center gap-x-2 mt-auto"
-                      onClick={() => handleDeleted(defaultValue?.id as number)}
-                      type="button"
-                      disabled={isDeleted}
-                    >
-                      {isDeleted ? (
-                        <Loader2Icon className="animate-spin" />
-                      ) : (
-                        <Trash />
-                      )}{" "}
-                      Borrar
-                    </Button>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <FormInput control={control} name="name" label="Nombre" />
+
+                      <FormInput
+                        control={control}
+                        name="totalPersons"
+                        label="Total de Personas"
+                        type="number"
+                      />
+                    </div>
+                    <div className="space-y-4">
+                      <FormInput
+                        control={control}
+                        name="pricePerNight"
+                        label="Precio por Noche $"
+                        type="number"
+                      />
+                      <FormSelect
+                        control={control}
+                        name="status"
+                        label="Estado"
+                        selectItem={statusOptions}
+                      />
+                    </div>
+
+                    <div className="col-span-full">
+                      <FormTextArea
+                        control={control}
+                        name="description"
+                        label="Descripción"
+                      />
+                    </div>
                   </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <FormInput control={control} name="name" label="Nombre" />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-                  <FormInput
-                    control={control}
-                    name="totalPersons"
-                    label="Total de Personas"
-                    type="number"
-                  />
-                </div>
-                <div className="space-y-4">
-                  <FormInput
-                    control={control}
-                    name="pricePerNight"
-                    label="Precio por Noche $"
-                    type="number"
-                  />
-                  <FormSelect
-                    control={control}
-                    name="status"
-                    label="Estado"
-                    selectItem={statusOptions}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <FormAsyncSelect
-                    control={control}
-                    name="provinceId"
-                    label="Municipio"
-                    onFetch={onFetch}
-                  />
-                </div>
-                <div>
-                  <FormAsyncSelect
-                    control={control}
-                    name="municipalityId"
-                    label="Provincia"
-                    onFetch={() => on(provinceId?.toString())}
-                  />
-                </div>
+            <TabsContent value={TabsValues.ADDRESS}>
+              <Card className="w-full  mx-auto  ">
+                <FormRoomHeader defaultValue={defaultValue} />
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <FormAsyncSelect
+                        control={control}
+                        name="provinceId"
+                        label="Municipio"
+                        onFetch={onFetch}
+                      />
+                    </div>
+                    <div>
+                      <FormAsyncSelect
+                        control={control}
+                        name="municipalityId"
+                        label="Provincia"
+                        onFetch={() => on(provinceId?.toString())}
+                      />
+                    </div>
 
-                <div>
-                  <FormInput
-                    control={control}
-                    name="street_1"
-                    label="Dirección"
-                  />
-                </div>
-                <div>
-                  <FormInput
-                    control={control}
-                    name="city"
-                    label="Localidad"
-                  />
-                </div>
-
-                <div className="col-span-full">
-                  <FormTextArea
-                    control={control}
-                    name="description"
-                    label="Descripción"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                    <div>
+                      <FormInput
+                        control={control}
+                        name="street_1"
+                        label="Dirección"
+                      />
+                    </div>
+                    <div>
+                      <FormInput
+                        control={control}
+                        name="city"
+                        label="Localidad"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
           {defaultValue && (
             <Card>
@@ -251,7 +231,7 @@ function FormRoom(props: Props) {
             <Button
               type="submit"
               className="w-full font-semibold flex gap-x-2"
-              disabled={isLoading || isDeleted}
+              disabled={isLoading}
             >
               {isLoading && <Loader2 className="animate-spin" />}
               {defaultValue ? "Editar" : "Agregar"}

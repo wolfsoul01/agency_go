@@ -37,16 +37,12 @@ const AsyncSelect: React.FC<AsyncSelectProps> = ({ onFetch, onSelect }) => {
     }
   }, [onFetch]);
 
-  console.log(options);
-
   return (
-    <Select onValueChange={onSelect}>
+    <Select onValueChange={onSelect} disabled={options.length === 0}>
       <SelectTrigger>
-        <SelectValue
-          placeholder={loading ? "Cargando..." : "Seleccione..."}
-        />
+        <SelectValue placeholder={loading ? "Cargando..." : "Seleccione..."} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-h-60">
         {options?.map((option, index) => (
           <SelectItem key={index} value={option.value}>
             {option.label}

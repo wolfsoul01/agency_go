@@ -16,9 +16,8 @@ function Accommodation() {
     refetch();
   };
 
-  
   return (
-    <section>
+    <section className="">
       <header className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Habitaciones</h2>
 
@@ -35,9 +34,11 @@ function Accommodation() {
 
       <RoomView rooms={data} />
 
+
       <Modal size="4xl" open={showModal} close={() => setShowModal(false)}>
         <FormRoom callback={callback} />
       </Modal>
+
     </section>
   );
 }
