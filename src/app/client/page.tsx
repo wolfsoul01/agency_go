@@ -1,8 +1,7 @@
-import * as React from "react";
+"use client";
 import { CalendarIcon, CarIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -12,24 +11,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import defaultImage from "@/assets/placeholder.png";
+
 import { DatePicker } from "@/components/shared/date-picker";
+import { useCars } from "./hooks/useGetCars";
+import { useRooms } from "./hooks/useGetRooms";
+import { useState } from "react";
+import RoomCard from "./components/roo-card";
+import CarCard from "./components/car-card";
+
+enum Tab {
+  CARS = "cars",
+  ROOMS = "rooms",
+}
 
 export default function ReservaPage() {
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  const { data: cars } = useCars(startDate, endDate);
+  const { data: rooms } = useRooms(startDate, endDate);
+
+  const [tab, setTab] = useState<string>(Tab.ROOMS);
+
   return (
     <div className="container mx-auto px-4 py-4">
-      
-
-      <Card className="mb-8 ">
-        <CardContent className="p-6">
-          <Tabs defaultValue="alojamiento" className="w-full">
+      <Tabs defaultValue={Tab.ROOMS} className="w-full" onValueChange={setTab}>
+        <Card className="mb-8 ">
+          <CardContent className="p-6">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="alojamiento">Alojamiento</TabsTrigger>
-              <TabsTrigger value="autos">Autos</TabsTrigger>
+              <TabsTrigger value={Tab.ROOMS}>Alojamiento</TabsTrigger>
+              <TabsTrigger value={Tab.CARS}>Autos</TabsTrigger>
             </TabsList>
-            <TabsContent value="alojamiento">
+            <TabsContent value={Tab.ROOMS}>
               <div className="flex flex-wrap gap-4">
-                <Input className="flex-grow" placeholder="¿A dónde vas?" />
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
                   <DatePicker />
@@ -54,134 +68,93 @@ export default function ReservaPage() {
                 </Button>
               </div>
             </TabsContent>
-            <TabsContent value="autos">
+            <TabsContent value={Tab.CARS}>
               <div className="flex flex-wrap gap-4">
-                <Input className="flex-grow" placeholder="Lugar de recogida" />
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
-                  <Input
-                    type="date"
-                    className="w-40"
-                    placeholder="Fecha de recogida"
-                  />
+                  <DatePicker />
                 </div>
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
-                  <Input
-                    type="date"
-                    className="w-40"
-                    placeholder="Fecha de devolución"
-                  />
+                  <DatePicker />
                 </div>
                 <Button className="w-full sm:w-auto">
                   <SearchIcon className="mr-2 h-4 w-4" /> Buscar Autos
                 </Button>
               </div>
             </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Filtros</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="price-range">Rango de Precio</Label>
-                {/* <Slider
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="md:col-span-1 bg-background/80  z-40"></div>
+          <Card className="md:col-span-1 fixed max-w-72 z-50">
+            <div className="">
+
+            <CardHeader>
+              <CardTitle>Filtros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="price-range">Rango de Precio</Label>
+                  {/* <Slider
                   id="price-range"
                   defaultValue={[0, 1000]}
                   max={1000}
                   step={10}
                   className="mt-2"
                 /> */}
-              </div>
-              <div>
-                <Label htmlFor="rating">Calificación mínima</Label>
-                <Select>
-                  <SelectTrigger id="rating">
-                    <SelectValue placeholder="Seleccionar calificación" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3">3 estrellas</SelectItem>
-                    <SelectItem value="4">4 estrellas</SelectItem>
-                    <SelectItem value="5">5 estrellas</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Servicios</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  <Button variant="outline" className="justify-start">
-                    <CarIcon className="mr-2 h-4 w-4" /> Estacionamiento
-                  </Button>
-                  <Button variant="outline" className="justify-start">
-                    WiFi
-                  </Button>
-                  <Button variant="outline" className="justify-start">
-                    Piscina
-                  </Button>
-                  <Button variant="outline" className="justify-start">
-                    Gimnasio
-                  </Button>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <div className="md:col-span-3 space-y-6">
-          {[1, 2, 3].map((item) => (
-            <Card key={item}>
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <img
-                    src={defaultImage.src}
-                    alt="Imagen del alojamiento"
-                    className="rounded-lg object-cover w-full sm:w-1/3"
-                  />
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-2">
-                      Hotel Ejemplo {item}
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Ubicación céntrica, a 5 min de la playa
-                    </p>
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <div className="flex items-center">
-                          {[...Array(4)].map((_, i) => (
-                            <svg
-                              key={i}
-                              className="w-5 h-5 text-yellow-400"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
-                          <span className="ml-2 text-sm text-muted-foreground">
-                            4.0 (250 reseñas)
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">
-                          Precio por noche desde
-                        </p>
-                        <p className="text-2xl font-bold">$120</p>
-                        <Button className="mt-2">Reservar ahora</Button>
-                      </div>
-                    </div>
+                <div>
+                  <Label htmlFor="rating">Calificación mínima</Label>
+                  <Select>
+                    <SelectTrigger id="rating">
+                      <SelectValue placeholder="Seleccionar calificación" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3">3 estrellas</SelectItem>
+                      <SelectItem value="4">4 estrellas</SelectItem>
+                      <SelectItem value="5">5 estrellas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Servicios</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <Button variant="outline" className="justify-start">
+                      <CarIcon className="mr-2 h-4 w-4" /> Estacionamiento
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      WiFi
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      Piscina
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      Gimnasio
+                    </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </CardContent>
+            </div>
+
+          </Card>
+          {tab === Tab.ROOMS && (
+            <div className="md:col-span-3 space-y-6">
+              {tab === Tab.ROOMS &&
+                rooms.map((item) => <RoomCard room={item} key={item.id} />)}
+            </div>
+          )}
+          {
+            <div className="md:col-span-3 space-y-6">
+              {tab === Tab.CARS &&
+                cars.map((item) => <CarCard car={item} key={item.id} />)}
+            </div>
+          }
         </div>
-      </div>
+      </Tabs>
     </div>
   );
 }
