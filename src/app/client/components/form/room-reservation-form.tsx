@@ -21,6 +21,11 @@ import { Room } from "@/interfaces/server-interface";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import query from "@/lib/axios.config";
+import useSessionStore from "@/store/useSession";
+import { manageError } from "@/lib/manege-error";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   starDate: z.date({
@@ -30,21 +35,26 @@ const formSchema = z.object({
     required_error: "La fecha de check-out es requerida.",
   }),
   totalPersones: z.preprocess(Number, z.number().positive().int()),
-  codeDiscount: z.string(),
+  codeDiscount: z.string().optional(),
 });
 
+type IForm = z.infer<typeof formSchema>;
 interface Props {
   starDate: Date;
   endDate: Date;
   room?: Room;
+  callback?: () => void;
 }
 
 export default function RoomReservationForm({
   starDate,
   endDate,
   room,
+  callback,
 }: Props) {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const { user } = useSessionStore();
+
+  const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       starDate,
@@ -54,9 +64,20 @@ export default function RoomReservationForm({
 
   const { control } = form;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Aquí iría la lógica para enviar los datos de reserva al servidor
+  async function onSubmit(values: IForm) {
+    try {
+      await query.post("reservations/room", {
+        roomId: room?.id,
+        userId: user?.id,
+        startDate: new Date(values.starDate),
+        endDate: new Date(values.endDate),
+      });
+      toast.success("La reserva se ha realizado con éxito");
+
+      callback && callback();
+    } catch (error) {
+      manageError(error as AxiosError);
+    }
   }
 
   const totalDays = useMemo(() => {

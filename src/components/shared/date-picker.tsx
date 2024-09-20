@@ -18,11 +18,24 @@ interface Props {
   minDate?: Date;
   maxDate?: Date;
   onChange?: (date?: Date) => void;
-  defaultDate?:Date
+  defaultDate?: Date;
+  externalSate?: Date;
 }
 
-export function DatePicker({ maxDate, minDate, onChange ,defaultDate}: Props) {
-  const [date, setDate] = React.useState<Date | undefined>(defaultDate ?? new Date());
+export function DatePicker({
+  maxDate,
+  minDate,
+  onChange,
+  defaultDate,
+  externalSate,
+}: Props) {
+  const [date, setDate] = React.useState<Date | undefined>(
+    defaultDate ?? new Date()
+  );
+
+  React.useEffect(() => {
+    setDate(externalSate);
+  }, [externalSate]);
 
   return (
     <Popover>

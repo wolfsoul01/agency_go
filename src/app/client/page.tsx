@@ -15,17 +15,17 @@ import {
 import { DatePicker } from "@/components/shared/date-picker";
 import { useCars } from "./hooks/useGetCars";
 import { useRooms } from "./hooks/useGetRooms";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RoomCard from "./components/roo-card";
 import CarCard from "./components/car-card";
-import { useForm } from "react-hook-form";
 import CarCardSkeleton from "./components/car-card-skeleton";
 import RoomCardSkeleton from "./components/room-card-skeleton";
-import { addDays } from "date-fns";
+import { addDays, endOfDay, isBefore, isSameDay, startOfDay } from "date-fns";
 import { Card as Car, Room } from "@/interfaces/server-interface";
 import Modal from "@/components/shared/modal";
 import RoomReservationForm from "./components/form/room-reservation-form";
 import CarReservationForm from "./components/form/car-reservation-form";
+import { useRouter } from "next/navigation";
 
 enum Tab {
   CARS = "cars",
@@ -33,10 +33,27 @@ enum Tab {
 }
 
 export default function ReservaPage() {
+  const router = useRouter();
+
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(
     addDays(new Date(), 1)
   );
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      const isBeforeSelect =
+        isBefore(endOfDay(endDate), startOfDay(startDate)) ||
+        isSameDay(endOfDay(endDate), startOfDay(startDate));
+
+      console.log(isBeforeSelect);
+      console.log(endOfDay(endDate), startOfDay(startDate));
+
+      if (isBeforeSelect) {
+        setEndDate(addDays(startDate, 1));
+      }
+    }
+  }, [startDate]);
 
   const handleChangeStartDate = (date?: Date) => {
     setStartDate(date);
@@ -56,9 +73,6 @@ export default function ReservaPage() {
 
   const [tab, setTab] = useState<string>(Tab.ROOMS);
 
-  const form = useForm();
-  const { control, watch, handleSubmit } = form;
-
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
@@ -73,6 +87,12 @@ export default function ReservaPage() {
     const car = cars?.find((car) => car.id === value);
     setSelectedCar(car || null);
     setShowModal2(true);
+  };
+
+  const callback = () => {
+    setShowModal(false);
+    setShowModal2(false);
+    router.refresh();
   };
 
   return (
@@ -101,6 +121,7 @@ export default function ReservaPage() {
                     minDate={addDays(new Date(), 1)}
                     onChange={handleChangeEndDate}
                     defaultDate={endDate}
+                    externalSate={endDate}
                   />
                 </div>
                 <Select>
@@ -121,7 +142,7 @@ export default function ReservaPage() {
             </TabsContent>
             <TabsContent value={Tab.CARS}>
               <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground" />
                   <DatePicker
                     minDate={new Date()}
@@ -235,6 +256,7 @@ export default function ReservaPage() {
           endDate={endDate as Date}
           starDate={startDate as Date}
           room={selectedRoom as Room}
+          callback={callback}
         />
       </Modal>
       <Modal open={showModal2} close={() => setShowModal2(false)} size="3xl">

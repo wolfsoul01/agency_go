@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/utils";
 import React from "react";
 import defaultImage from "@/assets/placeholder.png";
 import { Button } from "@/components/ui/button";
+import { User2 } from "lucide-react";
 
 interface Props {
   room: Room;
@@ -19,10 +20,17 @@ function RoomCard({ room: item, handleSelect }: Props) {
             alt="Imagen del alojamiento"
             className="rounded-lg object-cover w-full sm:w-1/3"
           />
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
-            <p className="text-muted-foreground mb-4">{item.description}</p>
-            <div className="flex justify-between items-end">
+          <div className="flex-1 flex flex-col justify-between ">
+            <div>
+              <h3 className="text-2xl font-semibold mb-2">{item.name}</h3>
+              <span className=" font-semibold mb-2 flex items-center gap-x-2">
+                <User2 className="size-5" />
+                Capacidad :{item.totalPersons}
+              </span>
+              <span className="text-xl font-semibold my-3">Descripción :</span>
+              <p className="text-muted-foreground mb-4">{item.description}</p>
+            </div>
+            <div className="flex justify-between  items-end">
               <div>
                 <div className="flex items-center">
                   {[...Array(4)].map((_, i) => (
