@@ -4,25 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Fuel, Gauge, Calendar, Zap } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 
-interface Car {
-  id: string
-  title: string
-  make: string
-  model: string
-  year: number
-  priceForDay: number
-  image: string
-  fuelType: string
-  transmission: string
-  mileage: number
-  acceleration: number
-}
 
 interface Props {
-  car: Car
+  car: any
+  handleSelect : (carId: number)  => void
 }
 
-export default function CarCard({ car }: Props) {
+export default function CarCard({ car,handleSelect }: Props) {
   return (
     <Card className="overflow-hidden">
       <div className="relative aspect-square object-cover w-full ">
@@ -30,7 +18,7 @@ export default function CarCard({ car }: Props) {
           src={'http://localhost:3001/uploads/file-1726677700672.png'}
           alt={`${car.make} ${car.model}`}
           //layout="fill"
-          objectFit="cover"
+          //objectFit="cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
@@ -81,7 +69,7 @@ export default function CarCard({ car }: Props) {
             <p className="text-2xl font-bold">{formatCurrency(car?.priceForDay)}</p>
             <p className="text-sm text-muted-foreground">por día</p>
           </div>
-          <Button>Reservar ahora</Button>
+          <Button onClick={()=> handleSelect(car.id as number)}>Reservar ahora</Button>
         </div>
       </CardFooter>
     </Card>

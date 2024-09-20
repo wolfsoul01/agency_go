@@ -14,8 +14,15 @@ import {
 } from "@/components/ui/popover";
 import { es } from "date-fns/locale";
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>();
+interface Props {
+  minDate?: Date;
+  maxDate?: Date;
+  onChange?: (date?: Date) => void;
+  defaultDate?:Date
+}
+
+export function DatePicker({ maxDate, minDate, onChange ,defaultDate}: Props) {
+  const [date, setDate] = React.useState<Date | undefined>(defaultDate ?? new Date());
 
   return (
     <Popover>
@@ -23,7 +30,7 @@ export function DatePicker() {
         <Button
           variant={"outline"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "w-[300px] justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
         >
@@ -31,7 +38,7 @@ export function DatePicker() {
           {date ? (
             format(date, "PPP", { locale: es })
           ) : (
-            <span>Pick a date</span>
+            <span>Seleccione una fecha</span>
           )}
         </Button>
       </PopoverTrigger>
@@ -39,8 +46,13 @@ export function DatePicker() {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={(date) => {
+            setDate(date);
+            onChange && onChange(date);
+          }}
           initialFocus
+          minDate={minDate}
+          maxDate={maxDate}
         />
       </PopoverContent>
     </Popover>

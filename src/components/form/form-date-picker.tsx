@@ -14,14 +14,18 @@ import { DatePicker } from "../shared/date-picker";
 interface FormInputProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
   control: Control<TFieldValues>;
-  label: string;
+  label?: string;
   className?: React.HTMLAttributes<HTMLIFrameElement>["className"];
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 export function FormDatePicker<TFieldValues extends FieldValues>({
   name,
   control,
   label,
+  minDate,
+  maxDate,
 }: FormInputProps<TFieldValues>) {
   return (
     <FormField
@@ -31,7 +35,11 @@ export function FormDatePicker<TFieldValues extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <DatePicker />
+            <DatePicker
+              minDate={minDate}
+              maxDate={maxDate}
+              onChange={field.onChange}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

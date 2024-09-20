@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   room: Room;
+  handleSelect: (roomId?: number) => void;
 }
-function RoomCard({ room: item }: Props) {
+function RoomCard({ room: item, handleSelect }: Props) {
   return (
     <Card key={item.id}>
       <CardContent className="p-6">
@@ -46,7 +47,9 @@ function RoomCard({ room: item }: Props) {
                 <p className="text-2xl font-bold">
                   {formatCurrency(item.pricePerNight)}
                 </p>
-                <Button className="mt-2">Reservar ahora</Button>
+                <Button className="mt-2" onClick={() => handleSelect(item.id)}>
+                  Reservar ahora
+                </Button>
               </div>
             </div>
           </div>

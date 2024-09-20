@@ -8,14 +8,23 @@ import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  minDate?: Date;
+  maxDate?: Date;
+};
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  minDate,
+  maxDate,
   ...props
 }: CalendarProps) {
+  const disabledDays = [
+    ...(minDate ? [{ before: minDate }] : []),
+    ...(maxDate ? [{ after: maxDate }] : []),
+  ];
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -55,6 +64,7 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
+      disabled={disabledDays}
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
