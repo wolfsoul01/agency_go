@@ -19,12 +19,16 @@ export interface Card {
   id: number;
   title: string;
   make: string;
+  km: number;
+  acceleration: number;
+  tank: number;
   model: string;
   status: string;
   type: string;
   year: number;
   priceForDay: number;
   available: boolean;
+  image: Image;
 }
 
 export interface Login {

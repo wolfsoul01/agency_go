@@ -1,7 +1,6 @@
 "use client";
 import {
   CalendarIcon,
-  CarIcon,
   SearchIcon,
   SearchSlash,
   SearchSlashIcon,
@@ -31,9 +30,6 @@ import { Card as Car, Room } from "@/interfaces/server-interface";
 import Modal from "@/components/shared/modal";
 import RoomReservationForm from "./components/form/room-reservation-form";
 import CarReservationForm from "./components/form/car-reservation-form";
-import { useRouter } from "next/navigation";
-import { Slider } from "@/components/ui/slider";
-import { formatCurrency } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 enum Tab {
@@ -42,7 +38,6 @@ enum Tab {
 }
 
 export default function ReservaPage() {
-  const router = useRouter();
 
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(
@@ -76,9 +71,9 @@ export default function ReservaPage() {
 
   const {
     data: cars,
-    isFetching: isFetchingCars,
+   // isFetching: isFetchingCars,
     refetch: refetchCar,
-  } = useCars(startDate, endDate);
+  } = useCars(startDate, endDate,price);
   const {
     data: rooms,
     isFetching: isFetchingRoom,
@@ -106,7 +101,7 @@ export default function ReservaPage() {
   const callback = () => {
     setShowModal(false);
     setShowModal2(false);
-    router.refresh();
+    tab === Tab.ROOMS ? refetchRoom() : refetchCar();
   };
 
   const handleRefresh = () => {
@@ -302,8 +297,9 @@ export default function ReservaPage() {
       <Modal open={showModal2} close={() => setShowModal2(false)} size="3xl">
         <CarReservationForm
           endDate={endDate as Date}
-          startDate={startDate as Date}
+          starDate={startDate as Date}
           car={selectedCar as Car}
+          callback={callback}
         />
       </Modal>
     </div>

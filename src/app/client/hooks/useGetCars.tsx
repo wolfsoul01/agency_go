@@ -3,17 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import query from "@/lib/axios.config";
 import { Card } from "@/interfaces/server-interface";
 
-const fetch = async (startDate?: Date, endDate?: Date) => {
+const fetch = async (startDate?: Date, endDate?: Date, price?: number) => {
   const response = await query.get("/client/cars", {
-    params: { startDate, endDate },
+    params: { startDate, endDate, price },
   });
   return response.data;
 };
 
-export const useCars = (startDate?: Date, endDate?: Date) => {
+export const useCars = (startDate?: Date, endDate?: Date, price?: number) => {
   const query = useQuery<Card[]>({
     queryKey: ["cars", startDate, endDate],
-    queryFn: () => fetch(startDate, endDate),
+    queryFn: () => fetch(startDate, endDate, price),
     initialData: [],
   });
 

@@ -15,58 +15,74 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { FormInput } from "@/components/form/form-input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Card as Car } from "@/interfaces/server-interface";
+import query from "@/lib/axios.config";
+import { manageError } from "@/lib/manege-error";
+import { AxiosError } from "axios";
+import useSessionStore from "@/store/useSession";
+import { toast } from "sonner";
+import { FormTextArea } from "@/components/form/form-text-area";
 
 const formSchema = z.object({
-  startDate: z.date({
+  starDate: z.date({
     required_error: "La fecha de inicio del alquiler es requerida.",
   }),
   endDate: z.date({
     required_error: "La fecha de fin del alquiler es requerida.",
   }),
-  driverLicense: z
-    .string()
-    .min(1, "El número de licencia de conducir es requerido."),
-  additionalDrivers: z.preprocess(Number, z.number().nonnegative().int()),
-  insuranceOption: z.enum(["basic", "premium", "full"]),
+  customerNotes: z.string().optional(),
 });
 
-
-
 interface Props {
-  startDate?: Date;
+  starDate?: Date;
   endDate?: Date;
   car: Car;
+  callback?: () => void;
 }
 
-export default function CarReservationForm({ startDate, endDate, car }: Props) {
-  const form = useForm<z.infer<typeof formSchema>>({
+type IForm = z.infer<typeof formSchema>;
+
+export default function CarReservationForm({
+  starDate,
+  endDate,
+  car,
+  callback,
+}: Props) {
+  const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startDate,
+      starDate,
       endDate,
-      additionalDrivers: 0,
-      insuranceOption: "basic",
     },
   });
-
+  const { user } = useSessionStore();
   const { control } = form;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Aquí iría la lógica para enviar los datos de reserva del auto al servidor
+  async function onSubmit(values: IForm) {
+    try {
+      await query.post("reservations/car", {
+        carId: car?.id,
+        userId: user?.id,
+        startDate: new Date(values.starDate),
+        endDate: new Date(values.endDate),
+      });
+      toast.success("La reserva se ha realizado con éxito");
+
+      callback && callback();
+    } catch (error) {
+      manageError(error as AxiosError);
+    }
   }
 
   const totalDays = useMemo(() => {
     return differenceInDays(
       endOfDay(endDate as Date),
-      startOfDay(startDate as Date)
+      startOfDay(starDate as Date)
     );
-  }, [startDate, endDate]);
+  }, [starDate, endDate]);
 
   return (
     <Form {...form}>
@@ -84,7 +100,7 @@ export default function CarReservationForm({ startDate, endDate, car }: Props) {
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
             <Label className="text-xl">
-              Fecha de inicio: {format(startDate as Date, "dd/MM/yyyy")}
+              Fecha de inicio: {format(starDate as Date, "dd/MM/yyyy")}
             </Label>
             <Label className="text-xl">
               Fecha fin: {format(endDate as Date, "dd/MM/yyyy")}
@@ -120,22 +136,17 @@ export default function CarReservationForm({ startDate, endDate, car }: Props) {
               </div>
             </div>
             <Separator className="col-span-full " />
-            <FormInput
-              control={control}
-              label="Número de Licencia de Conducir"
-              name="driverLicense"
-            />
-            <FormInput
-              control={control}
-              label="Conductores Adicionales"
-              name="additionalDrivers"
-              type="number"
-            />
-            
+            <div className="col-span-full">
+              <FormTextArea
+                control={control}
+                name="customerNotes"
+                label="Notas "
+              />
+            </div>
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full -mb-5">
           Reservar Auto
         </Button>
       </form>
