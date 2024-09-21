@@ -42,7 +42,6 @@ export default function DashboardLayout({
       <div className="grid min-h-screen w-full ">
         <div className="flex flex-col">
           <header className="flex h-16 items-center justify-evenly gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-
             <div className="flex  gap-x-3">
               <Link href="/" className="flex items-center gap-2 font-semibold">
                 <Package2 className="h-6 w-6" />
@@ -73,7 +72,13 @@ export default function DashboardLayout({
                   {user?.name}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => router.push("client/my-reservations")}
+                >
+                  Mis reservas
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
+
                 <DropdownMenuItem onClick={logout}>
                   Cerrar Sesión
                 </DropdownMenuItem>

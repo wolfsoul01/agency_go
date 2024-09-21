@@ -94,6 +94,7 @@ export default function DashboardLayout({
                 <DropdownMenuItem onClick={logout}>
                   Cerrar Sesión
                 </DropdownMenuItem>
+              
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
