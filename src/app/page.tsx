@@ -110,7 +110,7 @@ export default function App() {
           alt="Image"
           width="1920"
           height="1080"
-          className="h-[100vh] w-full object-cover brightness-[0.2]"
+          className="h-[100vh] w-full object-cover "
         />
       </div>
     </div>

@@ -5,14 +5,14 @@ import { Calendar } from "@/components/ui/calendar";
 import React, { useState } from "react";
 import { columnsReservation } from "./components/reservation-columns";
 import { useReservations } from "./hooks/useReservations";
-import { addDays} from "date-fns";
+import { addDays, startOfDay } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calculator, CalendarDays, Car, HousePlus, Users } from "lucide-react";
 import { useSummaryReservation } from "./hooks/useSummaryReservations";
 import { formatCurrency } from "@/lib/utils";
 
 function Reservations() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(startOfDay(new Date()));
 
   const endDay = addDays(date as Date, 1);
 

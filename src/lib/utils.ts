@@ -13,8 +13,8 @@ export function formatDate(date: Date) {
   return formatted;
 }
 
-export function formatCurrency(value: number | string) {
-  const parsed = Number(value);
+export function formatCurrency(value?: number | string) {
+  const parsed = Number(value ?? 0);
   const formatted = new Intl.NumberFormat("es-ES", {
     style: "currency",
     currency: "CUP",

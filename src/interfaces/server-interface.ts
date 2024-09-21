@@ -117,7 +117,9 @@ export interface Reservation {
   status: ReservationStatus;
   userId: number;
   roomId: number;
+  totalPersones: number;
   carId: number;
+  customerNotes: string;
   driverId: number;
   room: Room;
   user: User;

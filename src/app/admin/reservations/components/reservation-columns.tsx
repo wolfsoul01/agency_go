@@ -100,8 +100,11 @@ export const columnsReservation: ColumnDef<Reservation>[] = [
     header: "",
     cell: ({ row }) => {
       const router = useRouter();
+      const { type } = row.original;
       const action = () => {
-        router.push(`reservations/${row.original.id}`);
+        type === "CAR"
+          ? router.push(`reservations/car/${row.original.id}`)
+          : router.push(`reservations/room/${row.original.id}`);
       };
       return (
         <DropdownMenu>
