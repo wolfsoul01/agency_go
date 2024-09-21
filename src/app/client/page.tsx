@@ -1,5 +1,11 @@
 "use client";
-import { CalendarIcon, CarIcon, SearchIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CarIcon,
+  SearchIcon,
+  SearchSlash,
+  SearchSlashIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -26,6 +32,9 @@ import Modal from "@/components/shared/modal";
 import RoomReservationForm from "./components/form/room-reservation-form";
 import CarReservationForm from "./components/form/car-reservation-form";
 import { useRouter } from "next/navigation";
+import { Slider } from "@/components/ui/slider";
+import { formatCurrency } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 enum Tab {
   CARS = "cars",
@@ -40,14 +49,17 @@ export default function ReservaPage() {
     addDays(new Date(), 1)
   );
 
+  //Filters states
+  const [price, setPrice] = useState<number | undefined>(undefined);
+  const [totalPersons, setTotalPersones] = useState<number | undefined>(
+    undefined
+  );
+
   useEffect(() => {
     if (startDate && endDate) {
       const isBeforeSelect =
         isBefore(endOfDay(endDate), startOfDay(startDate)) ||
         isSameDay(endOfDay(endDate), startOfDay(startDate));
-
-      console.log(isBeforeSelect);
-      console.log(endOfDay(endDate), startOfDay(startDate));
 
       if (isBeforeSelect) {
         setEndDate(addDays(startDate, 1));
@@ -62,14 +74,16 @@ export default function ReservaPage() {
     setEndDate(date);
   };
 
-  const { data: cars, isFetching: isFetchingCars } = useCars(
-    startDate,
-    endDate
-  );
-  const { data: rooms, isFetching: isFetchingRoom } = useRooms(
-    startDate,
-    endDate
-  );
+  const {
+    data: cars,
+    isFetching: isFetchingCars,
+    refetch: refetchCar,
+  } = useCars(startDate, endDate);
+  const {
+    data: rooms,
+    isFetching: isFetchingRoom,
+    refetch: refetchRoom,
+  } = useRooms(startDate, endDate, price, totalPersons);
 
   const [tab, setTab] = useState<string>(Tab.ROOMS);
 
@@ -93,6 +107,16 @@ export default function ReservaPage() {
     setShowModal(false);
     setShowModal2(false);
     router.refresh();
+  };
+
+  const handleRefresh = () => {
+    tab === Tab.ROOMS ? refetchRoom() : refetchCar();
+  };
+
+  const clearFilter = () => {
+    setPrice(undefined);
+    setTotalPersones(undefined);
+    handleRefresh();
   };
 
   return (
@@ -124,20 +148,6 @@ export default function ReservaPage() {
                     externalSate={endDate}
                   />
                 </div>
-                <Select>
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Huéspedes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 huésped</SelectItem>
-                    <SelectItem value="2">2 huéspedes</SelectItem>
-                    <SelectItem value="3">3 huéspedes</SelectItem>
-                    <SelectItem value="4">4+ huéspedes</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button className="w-full sm:w-auto">
-                  <SearchIcon className="mr-2 h-4 w-4" /> Buscar
-                </Button>
               </div>
             </TabsContent>
             <TabsContent value={Tab.CARS}>
@@ -156,6 +166,7 @@ export default function ReservaPage() {
                     minDate={addDays(new Date(), 1)}
                     onChange={handleChangeEndDate}
                     defaultDate={endDate}
+                    externalSate={endDate}
                   />
                 </div>
                 <Button className="w-full sm:w-auto">
@@ -176,17 +187,18 @@ export default function ReservaPage() {
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="price-range">Rango de Precio</Label>
-                    {/* <Slider
-                  id="price-range"
-                  defaultValue={[0, 1000]}
-                  max={1000}
-                  step={10}
-                  className="mt-2"
-                /> */}
+                    <Input
+                      type="number"
+                      id="price-range"
+                      onChange={(value) => setPrice(+value.target.value)}
+                      value={price}
+                    />
                   </div>
-                  <div>
-                    <Label htmlFor="rating">Calificación mínima</Label>
-                    <Select>
+                  {/* <div>
+                    <Label htmlFor="rating" className="mb-2">
+                      Calificación mínima
+                    </Label>
+                    <Select onValueChange={(value: string) => setRate(+value)}>
                       <SelectTrigger id="rating">
                         <SelectValue placeholder="Seleccionar calificación" />
                       </SelectTrigger>
@@ -196,23 +208,43 @@ export default function ReservaPage() {
                         <SelectItem value="5">5 estrellas</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div>
-                    <Label>Servicios</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <Button variant="outline" className="justify-start">
-                        <CarIcon className="mr-2 h-4 w-4" /> Estacionamiento
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        WiFi
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        Piscina
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        Gimnasio
-                      </Button>
+                  </div> */}
+                  {tab === Tab.ROOMS && (
+                    <div>
+                      <Label htmlFor="rating" className="mb-2">
+                        Capacidad
+                      </Label>
+                      <Select
+                        onValueChange={(value) => setTotalPersones(+value)}
+                      >
+                        <SelectTrigger className="">
+                          <SelectValue placeholder="Huéspedes" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 huésped</SelectItem>
+                          <SelectItem value="2">2 huéspedes</SelectItem>
+                          <SelectItem value="3">3 huéspedes</SelectItem>
+                          <SelectItem value="4">4+ huéspedes</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+                  )}
+                  <div>
+                    <footer className="w-full flex gap-x-4">
+                      <Button
+                        className="w-full sm:w-auto"
+                        onClick={clearFilter}
+                        variant={"destructive"}
+                      >
+                        <SearchSlashIcon className="mr-2 h-4 w-4" /> Limpiar
+                      </Button>
+                      <Button
+                        className="w-full sm:w-auto"
+                        onClick={() => handleRefresh()}
+                      >
+                        <SearchIcon className="mr-2 h-4 w-4" /> Buscar {"    "}
+                      </Button>
+                    </footer>
                   </div>
                 </div>
               </CardContent>
@@ -220,32 +252,40 @@ export default function ReservaPage() {
           </Card>
           {tab === Tab.ROOMS && (
             <div className="md:col-span-3 space-y-6">
-              {isFetchingRoom
-                ? Array.from({ length: 10 }).map((key, idx) => (
-                    <RoomCardSkeleton key={idx} />
-                  ))
-                : rooms.map((item) => (
-                    <RoomCard
-                      room={item}
-                      key={item.id}
-                      handleSelect={handleSelectRoom}
-                    />
-                  ))}
+              {isFetchingRoom ? (
+                Array.from({ length: 10 }).map((key, idx) => (
+                  <RoomCardSkeleton key={idx} />
+                ))
+              ) : rooms.length === 0 ? (
+                <NotResult />
+              ) : (
+                rooms.map((item) => (
+                  <RoomCard
+                    room={item}
+                    key={item.id}
+                    handleSelect={handleSelectRoom}
+                  />
+                ))
+              )}
             </div>
           )}
           {tab === Tab.CARS && (
             <div className="md:col-span-3 space-y-6">
-              {isFetchingRoom
-                ? Array.from({ length: 10 }).map((key, idx) => (
-                    <CarCardSkeleton key={idx} />
-                  ))
-                : cars.map((item) => (
-                    <CarCard
-                      car={item}
-                      key={item.id}
-                      handleSelect={handleSelectCard}
-                    />
-                  ))}
+              {isFetchingRoom ? (
+                Array.from({ length: 10 }).map((key, idx) => (
+                  <CarCardSkeleton key={idx} />
+                ))
+              ) : cars.length === 0 ? (
+                <NotResult />
+              ) : (
+                cars.map((item) => (
+                  <CarCard
+                    car={item}
+                    key={item.id}
+                    handleSelect={handleSelectCard}
+                  />
+                ))
+              )}
             </div>
           )}
         </div>
@@ -267,5 +307,16 @@ export default function ReservaPage() {
         />
       </Modal>
     </div>
+  );
+}
+
+function NotResult() {
+  return (
+    <>
+      <div className="flex flex-col gap-y-3 items-center justify-center h-full w-full">
+        <h1 className="text-4xl text-center font-medium">No hay resultado</h1>
+        <SearchSlash className="size-20" />
+      </div>
+    </>
   );
 }

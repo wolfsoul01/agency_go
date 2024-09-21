@@ -19,6 +19,7 @@ import { FormInput } from "@/components/form/form-input";
 import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Card as Car } from "@/interfaces/server-interface";
 
 const formSchema = z.object({
   startDate: z.date({
@@ -34,17 +35,7 @@ const formSchema = z.object({
   insuranceOption: z.enum(["basic", "premium", "full"]),
 });
 
-interface Car {
-  id: number;
-  title: string;
-  make: string;
-  model: string;
-  status: "OK" | "MAINTENANCE" | "UNAVAILABLE";
-  type: string;
-  year: number;
-  priceForDay: number;
-  available: boolean;
-}
+
 
 interface Props {
   startDate?: Date;
