@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
@@ -9,13 +10,14 @@ import {
   ClipboardListIcon,
   CreditCardIcon,
   HomeIcon,
+  Loader2,
   UsersIcon,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import query from "@/lib/axios.config";
 import { Reservation } from "@/interfaces/server-interface";
 import { toast } from "sonner";
@@ -23,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { es } from "date-fns/locale";
 import img from "@/assets/placeholder.png";
+import SkeletonReservationDetails from "@/app/client/components/skeleton-reservation";
 const fetchReservations = async (id: number) => {
   try {
     const response = await query.get(`/reservations/${id}`, {});
@@ -37,15 +40,54 @@ function ReservationDetails() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data: reservation, isFetching } = useQuery<Reservation>({
+  const {
+    data: reservation,
+    isFetching,
+    isError,
+  } = useQuery<Reservation>({
     queryKey: ["reservations", id],
     queryFn: () => fetchReservations(+id),
     initialData: undefined,
   });
 
-  console.log(reservation);
+  const confirmationMutation = useMutation({
+    mutationFn: (reservationId: number) =>
+      query.patch(`/reservations/confirm/${reservationId}`),
+    onSuccess: () => {
+      toast.success("Reserva confirmada con éxito");
+      router.refresh()
+    },
+    onError: () => {
+      toast.error("Hubo un error al confirmar la reserva");
+    },
+  });
+  const cancellationMutation = useMutation({
+    mutationFn: (reservationId: number) =>
+      query.delete(`/reservations/cancel/${reservationId}`),
+    onSuccess: () => {
+      toast.success("Reserva cancelada con éxito");
+      router.refresh()
+    },
+    onError: () => {
+      toast.error("Hubo un error al confirmar la reserva");
+    },
+  });
 
-  if (isFetching) return <p>Cargando...</p>;
+  const confirmation = () => {
+    if (reservation?.id) {
+      confirmationMutation.mutate(reservation.id);
+    }
+  };
+
+  const cancellation = () => {
+    if (reservation?.id) {
+      cancellationMutation.mutate(reservation.id);
+    }
+  };
+
+  if (isError) return <p>No se pudo obtener los datos</p>;
+  if (isFetching) return <SkeletonReservationDetails/>;
+
   return (
     <section>
       <header className="flex items-center gap-x-3 mb-3">
@@ -77,6 +119,37 @@ function ReservationDetails() {
                 >
                   {reservation?.status}
                 </Badge>
+
+                <div className="flex gap-x-3">
+                  {reservation?.status === "Pending" && (
+                    <Button
+                      className="bg-green-500"
+                      onClick={confirmation}
+                      disabled={confirmationMutation.isPending} // Deshabilitar el botón durante la petición
+                    >
+                      {confirmationMutation.isPending ? (
+                        <Loader2 className="animate-spin" /> 
+                      ) : (
+                        "Confirmar"
+                      )}
+                    </Button>
+                  )}
+
+                  {/* Botón de Cancelar */}
+                  {reservation?.status !== "Cancelled" && (
+                    <Button
+                      variant={"destructive"}
+                      onClick={cancellation}
+                      disabled={confirmationMutation.isPending} // Deshabilitar si está confirmando
+                    >
+                      {confirmationMutation.isPending ? (
+                       <Loader2 className="animate-spin" />
+                      ) : (
+                        "Cancelar"
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">

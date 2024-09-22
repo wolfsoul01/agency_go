@@ -20,6 +20,8 @@ function Reservations() {
 
   const { data: summary } = useSummaryReservation(date);
 
+  
+
   return (
     <section className="space-y-6">
       <header>

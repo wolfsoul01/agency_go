@@ -2,7 +2,7 @@ import {
   CarTaxiFront,
   Home,
   Hotel,
-  MapPin,
+  //MapPin,
   NotebookPen,
   User,
 } from "lucide-react";
@@ -14,11 +14,11 @@ export const routes = [
     label: "Home",
     icon: <Home className="size-5" />,
   },
-  {
-    href: "/admin/routes",
-    label: "Rutas",
-    icon: <MapPin className="size-5" />,
-  },
+  // {
+  //   href: "/admin/routes",
+  //   label: "Rutas",
+  //   icon: <MapPin className="size-5" />,
+  // },
   {
     href: "/admin/vehicle",
     label: "Vehículos",

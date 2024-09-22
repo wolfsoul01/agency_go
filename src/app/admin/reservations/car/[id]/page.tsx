@@ -11,18 +11,21 @@ import {
   ClipboardListIcon,
   Gauge,
   Zap,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Reservation } from "@/interfaces/server-interface";
-import { useQuery } from "@tanstack/react-query";
-import { useParams} from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 import query from "@/lib/axios.config";
-import img from '@/assets/placeholder.png';
+import img from "@/assets/placeholder.png";
+import { Button } from "@/components/ui/button";
+import SkeletonReservationDetails from "@/app/client/components/skeleton-reservation";
 
 const fetchReservations = async (id: number) => {
   try {
@@ -36,14 +39,50 @@ const fetchReservations = async (id: number) => {
 
 export default function DetallesReservaCoche() {
   const { id } = useParams();
-
+  const router = useRouter();
   const { data: reservation, isFetching } = useQuery<Reservation>({
     queryKey: ["reservations", id],
     queryFn: () => fetchReservations(+id),
     initialData: undefined,
   });
 
-  if (isFetching) return <p>Cargando...</p>;
+  const confirmationMutation = useMutation({
+    mutationFn: (reservationId: number) =>
+      query.patch(`/reservations/confirm/${reservationId}`),
+    onSuccess: () => {
+      toast.success("Reserva confirmada con éxito");
+      router.refresh();
+    },
+    onError: () => {
+      toast.error("Hubo un error al confirmar la reserva");
+    },
+  });
+  const cancellationMutation = useMutation({
+    mutationFn: (reservationId: number) =>
+      query.delete(`/reservations/cancel/${reservationId}`),
+    onSuccess: () => {
+      toast.success("Reserva cancelada con éxito");
+      router.refresh();
+    },
+    onError: () => {
+      toast.error("Hubo un error al confirmar la reserva");
+    },
+  });
+
+  const confirmation = () => {
+    if (reservation?.id) {
+      confirmationMutation.mutate(reservation.id);
+    }
+  };
+
+  const cancellation = () => {
+    if (reservation?.id) {
+      cancellationMutation.mutate(reservation.id);
+    }
+  };
+
+  const [user ]
+  if (isFetching) return <SkeletonReservationDetails/>;
   return (
     <div className="container mx-auto p-4">
       <Card className="w-full max-w-4xl mx-auto">
@@ -53,6 +92,38 @@ export default function DetallesReservaCoche() {
               Detalles de la Reserva de Coche
             </CardTitle>
             <Badge>{reservation?.status}</Badge>
+
+
+            <div className="flex items-center gap-/x-2">
+              {reservation?.status === "Pending" && (
+                <Button
+                  className="bg-green-500"
+                  onClick={confirmation}
+                  disabled={confirmationMutation.isPending} 
+                >
+                  {confirmationMutation.isPending ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    "Confirmar"
+                  )}
+                </Button>
+              )}
+
+              {/* Botón de Cancelar */}
+              {reservation?.status !== "Cancelled" && (
+                <Button
+                  variant={"destructive"}
+                  onClick={cancellation}
+                  disabled={confirmationMutation.isPending}
+                >
+                  {confirmationMutation.isPending ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    "Cancelar"
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -106,10 +177,7 @@ export default function DetallesReservaCoche() {
                 className="bg-muted rounded-md overflow-hidden"
               >
                 <img
-                  src={
-                    reservation?.car?.image?.url ||
-                    img.src
-                  }
+                  src={reservation?.car?.image?.url || img.src}
                   alt={`${reservation?.car?.make} ${reservation?.car?.model}`}
                   className="object-cover w-full h-full"
                 />
